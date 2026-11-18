@@ -1,7 +1,7 @@
 // Gemini 채팅 모델 호출. 모델 이름은 .env 에서 읽는다.
 // 무료 모델은 "high demand(503)"로 자주 실패하므로, 실패하거나 오래 걸리면 예비 모델로 한 번 더 시도한다.
 //   GEMINI_MODEL           기본 모델
-//   GEMINI_FALLBACK_MODEL  예비 모델 (쉼표로 여러 개 가능, 선택)
+//   GEMINI_FALLBACK_MODEL  예비 모델 (쉼표로 여러 개 가능, 선택). 질문 분류는 속도를 위해 이 모델부터 쓴다.
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import type { BaseMessageLike } from "@langchain/core/messages";
 import type { z } from "zod";
@@ -36,9 +36,12 @@ export function llmProblem(): string | null {
 export async function structured<T extends Record<string, unknown>>(
   schema: z.ZodType<T>,
   messages: BaseMessageLike[],
+  opts: { fast?: boolean } = {},
 ): Promise<T> {
   let lastError: unknown = new Error("사용할 모델이 없습니다.");
-  const names = modelNames();
+  // fast: 분류처럼 짧은 일은 빠른 예비 모델(lite)부터 쓴다. 기본 모델은 1회 10초 이상 걸릴 때가 많다.
+  const all = modelNames();
+  const names = opts.fast && all.length > 1 ? [...all.slice(1), all[0]] : all;
   // 최근에 실패한 모델은 잠시 건너뛴다. 모두 쉬는 중이면 원래 순서대로 다시 시도한다.
   const ready = names.filter((n) => (coolUntil.get(n) ?? 0) < Date.now());
   for (const name of ready.length ? ready : names) {

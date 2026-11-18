@@ -94,7 +94,7 @@ async function classifyNode(s: S): Promise<Partial<S>> {
     ["system", CLASSIFY_SYSTEM],
     ["human", `${historyText(s.history)}[분류할 질문]
 ${s.question}`],
-  ]);
+  ], { fast: true });
   return { category: r.category };
 }
 
