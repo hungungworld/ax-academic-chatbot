@@ -46,3 +46,19 @@ test("담당자 핸드폰 번호는 노출하지 않는다 (사무실 전화·�
   assert.match(cleaned, /02-6000-5968/);
   assert.match(cleaned, /hylee0120@kita\.net/);
 });
+
+import { dropPersonalVerdicts, ensureLatePoints } from "../lib/answer-checks.ts";
+
+test("지각 벌점 질문이면 2점·5점 기준을 둘 다 넣는다 (#2)", () => {
+  const pts = ensureLatePoints("09시 55분에 출근 체크했는데 벌점이 몇 점이에요?", ["경미한 지각: 09:51~10:00 입실은 2점이에요."]);
+  assert.ok(pts.some((p) => p.includes("5점")));
+  assert.equal(ensureLatePoints("공결 서류는 언제까지 내요?", ["a"]).length, 1);
+});
+
+test("개인 사정 답변에서 학생 숫자에 대입한 결론은 지운다 (#24)", () => {
+  const out = dropPersonalVerdicts("출결 벌점이 28점인데 저 퇴교되나요?", [
+    "출결 벌점 28점은 30점을 초과하지 않아 퇴교 대상이 아니에요.",
+    "출결 벌점이 30점에 도달하면 운영진과의 면담이 필수예요.",
+  ]);
+  assert.deepEqual(out, ["출결 벌점이 30점에 도달하면 운영진과의 면담이 필수예요."]);
+});

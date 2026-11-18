@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- 화면의 오브(.orb)와 같은 색. 탭에서 작게 보여도 구분되도록 가운데 색을 조금 진하게 -->
+  <defs>
+    <radialGradient id="base" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#C43BA8"/>
+      <stop offset="0.5" stop-color="#E77FCF"/>
+      <stop offset="1" stop-color="#C9B6F2"/>
+    </radialGradient>
+    <radialGradient id="sky" cx="70%" cy="70%" r="55%">
+      <stop offset="0" stop-color="#B9C9F5"/>
+      <stop offset="1" stop-color="#B9C9F5" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="peach" cx="30%" cy="75%" r="50%">
+      <stop offset="0" stop-color="#FAD3C4"/>
+      <stop offset="1" stop-color="#FAD3C4" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="shine" cx="35%" cy="30%" r="32%">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <circle cx="32" cy="32" r="30" fill="url(#base)"/>
+  <circle cx="32" cy="32" r="30" fill="url(#sky)"/>
+  <circle cx="32" cy="32" r="30" fill="url(#peach)"/>
+  <circle cx="32" cy="32" r="30" fill="url(#shine)"/>
+</svg>

@@ -11,6 +11,7 @@
 import { Annotation, END, START, StateGraph } from "@langchain/langgraph";
 import { z } from "zod";
 import { CONTACTS, stripMobile } from "./contacts";
+import { dropPersonalVerdicts, ensureLatePoints } from "./answer-checks";
 import { guard } from "./guard";
 import { structured } from "./llm";
 import { answerSystem, CLASSIFY_SYSTEM } from "./prompts";
@@ -36,7 +37,7 @@ type S = typeof State.State;
 // ---------- 답변 모양 ----------
 
 /** 모델 출력에서 앞에 붙은 번호·기호를 지우고 공백을 정리한다 */
-const clean = (t: string) => t.replace(/^\s*(\d+[.)]|[-•*·]|①|②|③|④|⑤|⑥)\s*/, "").replace(/\*\*/g, "").replace(/\s+/g, " ").trim();
+const clean = (t: string) => t.replace(/^\s*(\d+[.)]|[-•*·]|①|②|③|④|⑤|⑥)\s*/, "").replace(/^\s*구분\s*[:：]\s*/, "").replace(/\*\*/g, "").replace(/\s+/g, " ").trim();
 
 function shape(
   base: Omit<ChatReply, "answer" | "summary" | "points" | "note" | "followups"> & {
@@ -143,19 +144,23 @@ ${s.question}`],
 }
 
 async function answerNode(s: S): Promise<Partial<S>> {
-  const g = await generate(s, "rule");
-  if (!g) return { reply: OUT_OF_SCOPE() };
+  const g0 = await generate(s, "rule");
+  if (!g0) return { reply: OUT_OF_SCOPE() };
+  const g = { ...g0, points: ensureLatePoints(s.question, g0.points) };
   return { reply: shape({ category: "rule", ...g, handoff: false, showContacts: false }) };
 }
 
 async function handoffNode(s: S): Promise<Partial<S>> {
   const g = await generate(s, "personal");
+  const fallback = "이 문의는 담당자 확인이 필요해요.";
+  const [summary = fallback] = dropPersonalVerdicts(s.question, [g?.summary ?? fallback]);
+  const [note] = dropPersonalVerdicts(s.question, [g?.note ?? ""]);
   return {
     reply: shape({
       category: "personal",
-      summary: g?.summary ?? "이 문의는 담당자 확인이 필요해요.",
-      points: g?.points ?? [],
-      note: g?.note,
+      summary,
+      points: dropPersonalVerdicts(s.question, g?.points ?? []),
+      note,
       followups: g?.followups,
       citations: g?.citations ?? [],
       handoff: true,
