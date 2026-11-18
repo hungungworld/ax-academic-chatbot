@@ -135,8 +135,12 @@ ${contextText(docs)}
 ${historyText(s.history)}[교육생 질문]
 ${s.question}`],
   ]);
-  const known = new Set(docs.map((d) => d.label));
-  const labels = r.citations.map((c) => c.trim()).filter((c) => known.has(c));
+  // 모델이 "제9조 4항", "제9조(성적)"처럼 항·제목을 붙여 써도 조 이름으로 맞춘다. 맞는 게 없으면 버린다.
+  const known = docs.map((d) => d.label);
+  const labels = r.citations
+    .map((c) => c.replace(/\s+/g, " ").trim())
+    .map((c) => known.find((k) => c === k || c.startsWith(`${k} `) || c.startsWith(`${k}(`) || new RegExp(`^${k}(?!\\d)`).test(c)))
+    .filter((k): k is string => !!k);
   if (!r.grounded || !r.summary.trim()) return null;
   const asked = s.question.replace(/\s/g, "");
   const followups = (r.followups ?? []).filter((f) => f.replace(/\s/g, "") !== asked);
