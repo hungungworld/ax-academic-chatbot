@@ -1,0 +1,18 @@
+# 비밀 값 (저장소에 올리지 않음)
+.env
+.env.*
+!.env.example
+
+# 빌드 산출물
+node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+.vercel
+.neon
+
+# 임시 실험 파일, 원본 문서(규정 원문은 rules_with_tables.md로 대체)
+_probe*.ts
+*.pdf
+*.hwpx

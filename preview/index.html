@@ -1,0 +1,939 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>디자인 미리보기 — AX마스터 학사 챗봇</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Instrument+Serif&display=swap" />
+<style>
+/* ===== DESIGN.md 9장 CSS (design.css와 같은 내용) ===== */
+/* ========== 1. 토큰 ========== */
+:root {
+  /* 배경 */
+  --bg-base: #F7F2FB;
+  --bg-blush: #FBEFF6;
+  --bg-lilac: #EEE6FA;
+  --bg-gradient: linear-gradient(160deg, #FBEFF6 0%, #F7F2FB 45%, #EEE6FA 100%);
+
+  /* 빛 */
+  --glow-pink: #F5B8DA;
+  --glow-magenta: #E77FCF;
+  --glow-lilac: #C9B6F2;
+  --glow-sky: #B9C9F5;
+  --glow-peach: #FAD3C4;
+
+  /* 브랜드 */
+  --brand-600: #A12E92;
+  --brand-500: #C43BA8;
+  --brand-300: #E77FCF;
+  --brand-100: #FBE3F3;
+  --brand-gradient: linear-gradient(135deg, #A12E92 0%, #C43BA8 100%);
+  --accent-lavender: #7B6BB0;
+
+  /* 글자 */
+  --text-strong: #231C36;
+  --text-body: #3A3350;
+  --text-sub: #5E5675;
+  --text-muted: #736B8A;
+  --text-placeholder: #8F88A3;
+  --text-on-brand: #FFFFFF;
+
+  /* 상태 */
+  --success: #1F7A55;  --success-bg: #E3F5EC;
+  --warning: #8A5A00;  --warning-bg: #FFF3D6;
+  --danger:  #B4233C;  --danger-bg:  #FDE6EA;
+  --info:    #3F55A8;  --info-bg:    #E6ECFB;
+
+  /* 유리 */
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-bg-strong: rgba(255, 255, 255, 0.75);
+  --glass-bg-subtle: rgba(255, 255, 255, 0.35);
+  --glass-border: rgba(255, 255, 255, 0.7);
+  --glass-border-soft: rgba(164, 140, 200, 0.18);
+  --glass-blur: 20px;
+  --glass-blur-strong: 32px;
+  /* 윗면 빛 + 1px 테두리 선. border 대신 inset으로 그려서 박스 높이를 늘리지 않는다 (6-10) */
+  --glass-inset: inset 0 1px 0 rgba(255, 255, 255, 0.8), inset 0 0 0 1px var(--glass-border);
+
+  /* 글꼴 */
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+    "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+  --font-serif-ko: "Gowun Batang", "Nanum Myeongjo", serif;
+  --font-serif-en: "Instrument Serif", Georgia, serif;
+
+  --fs-display: 34px;
+  --fs-h1: 26px;
+  --fs-h2: 20px;
+  --fs-h3: 17px;
+  --fs-body: 16px;
+  --fs-body-sm: 15px;
+  --fs-caption: 13px;
+  --fs-button: 15px;
+
+  /* 줄 높이 (4px 배수, 6-10) */
+  --lh-display: 44px;
+  --lh-h1: 36px;
+  --lh-h2: 28px;
+  --lh-h3: 24px;
+  --lh-body: 28px;
+  --lh-body-sm: 24px;
+  --lh-label: 20px;
+  --lh-caption: 20px;
+
+  /* 간격 */
+  --space-1: 4px;   --space-2: 8px;   --space-3: 12px;  --space-4: 16px;
+  --space-5: 20px;  --space-6: 24px;  --space-8: 32px;  --space-10: 40px;
+  --space-12: 48px; --space-16: 64px;
+  --page-x: var(--space-4);
+  --section-gap: var(--space-8);
+
+  /* 둥글기 */
+  --radius-xs: 6px;  --radius-sm: 12px; --radius-md: 16px;
+  --radius-lg: 24px; --radius-xl: 32px; --radius-pill: 999px;
+
+  /* 그림자 */
+  --shadow-sm: 0 2px 8px rgba(120, 90, 170, 0.08);
+  --shadow-md: 0 8px 24px rgba(120, 90, 170, 0.12);
+  --shadow-lg: 0 20px 48px rgba(120, 90, 170, 0.16);
+  --shadow-glow: 0 8px 24px rgba(196, 59, 168, 0.35);
+  --focus-ring: 0 0 0 3px rgba(196, 59, 168, 0.45);
+
+  /* 움직임 */
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --dur-fast: 160ms;
+  --dur-base: 240ms;
+  --dur-slow: 400ms;
+
+  /* 레이아웃 */
+  --chat-max: 720px;
+  --admin-max: 1120px;
+  --wide-max: 1280px;
+  --measure: 36em;              /* 본문 한 줄 최대 길이 (한글 35–40자) */
+  --header-h: 56px;
+
+  /* 그리드 (mobile) */
+  --grid-cols: 4;
+  --gutter: var(--space-4);
+  --card-pad: var(--space-4);
+
+  /* 겹침 순서 */
+  --z-sticky: 20;   /* 헤더 */
+  --z-fixed: 30;    /* 하단 입력바 */
+  --z-overlay: 50;  /* 모달·바텀시트 */
+  --z-toast: 60;    /* 토스트 */
+}
+
+@media (min-width: 768px) {
+  :root {
+    --page-x: var(--space-6);
+    --section-gap: var(--space-10);
+    --grid-cols: 8;
+    --gutter: var(--space-6);
+    --card-pad: var(--space-5);
+    --fs-display: 40px;
+    --fs-h1: 28px;
+    --lh-display: 52px;
+  }
+}
+@media (min-width: 1024px) {
+  :root {
+    --page-x: var(--space-10);
+    --section-gap: var(--space-12);
+    --grid-cols: 12;
+    --card-pad: var(--space-6);
+    --fs-display: 44px;
+    --fs-h1: 32px;
+    --fs-h2: 22px;
+    --lh-display: 56px;
+    --lh-h1: 40px;
+    --lh-h2: 32px;
+    --header-h: 64px;
+  }
+}
+
+/* ========== 2. 기본 ========== */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--bg-base);
+  background-image: var(--bg-gradient);
+  background-attachment: fixed;
+  color: var(--text-body);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  letter-spacing: -0.01em;
+  word-break: keep-all;          /* 한국어 단어 단위 줄바꿈 (필수) */
+  overflow-wrap: anywhere;       /* 긴 URL·이메일만 강제로 끊음 */
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 { margin: 0; color: var(--text-strong); letter-spacing: -0.02em; text-wrap: balance; }
+p { margin: 0; text-wrap: pretty; }
+p + p { margin-top: var(--space-3); }
+
+.t-display { font-family: var(--font-serif-ko); font-size: var(--fs-display); line-height: var(--lh-display); font-weight: 700; }
+.t-display em, .t-accent { font-style: normal; color: var(--accent-lavender); }
+.t-h1 { font-family: var(--font-serif-ko); font-size: var(--fs-h1); line-height: var(--lh-h1); font-weight: 700; }
+.t-h2 { font-size: var(--fs-h2); line-height: var(--lh-h2); font-weight: 700; }
+.t-h3 { font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 600; }
+.t-sub { font-size: var(--fs-body-sm); line-height: var(--lh-body-sm); color: var(--text-sub); }
+.t-caption { font-size: var(--fs-caption); line-height: var(--lh-caption); font-weight: 500; color: var(--text-muted); letter-spacing: 0; }
+.t-num { font-variant-numeric: tabular-nums; }
+.t-en { font-family: var(--font-serif-en); }
+
+:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* ========== 3. 배경 번짐 ========== */
+.bg-blobs { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.bg-blobs::before,
+.bg-blobs::after {
+  content: ""; position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.6;
+}
+.bg-blobs::before { width: 420px; height: 420px; top: -120px; left: -120px; background: var(--glow-pink); }
+.bg-blobs::after  { width: 380px; height: 380px; bottom: -100px; right: -120px; background: var(--glow-lilac); }
+
+/* ========== 4. 유리 ========== */
+.glass {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+  box-shadow: var(--shadow-md), var(--glass-inset);
+}
+.glass--strong { background: var(--glass-bg-strong); }
+.glass--subtle { background: var(--glass-bg-subtle); box-shadow: var(--shadow-sm), var(--glass-inset); }
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass, .glass--strong, .glass--subtle { background: rgba(255, 255, 255, 0.92); }
+}
+
+/* ========== 5. 레이아웃 ========== */
+.container { width: 100%; max-width: var(--chat-max); margin-inline: auto; padding-inline: var(--page-x); }
+.container--admin { max-width: var(--admin-max); }
+.container--wide { max-width: var(--wide-max); }
+.section + .section { margin-top: var(--section-gap); }
+.stack-2 > * + * { margin-top: var(--space-2); }
+.stack-3 > * + * { margin-top: var(--space-3); }
+.stack-4 > * + * { margin-top: var(--space-4); }
+.stack-6 > * + * { margin-top: var(--space-6); }
+
+/* ========== 6. 헤더 ========== */
+.header {
+  position: sticky; top: 0; z-index: var(--z-sticky);
+  height: var(--header-h);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--space-2) var(--page-x);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
+  border-bottom: 1px solid var(--glass-border-soft);
+}
+
+/* ========== 7. 버튼 ========== */
+.btn {
+  --btn-h: 44px; --btn-px: var(--space-5); --btn-fs: var(--fs-button);
+  position: relative;
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  height: var(--btn-h); padding: 0 var(--btn-px);
+  border: 1px solid transparent; border-radius: var(--radius-pill);
+  font: 600 var(--btn-fs)/20px var(--font-sans); letter-spacing: -0.01em;
+  white-space: nowrap; cursor: pointer; user-select: none;
+  transition: transform var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out),
+              background-color var(--dur-fast) var(--ease-out),
+              filter var(--dur-fast) var(--ease-out);
+}
+.btn svg { width: 18px; height: 18px; flex: none; }
+.btn:active { transform: scale(0.97); }
+.btn:disabled, .btn[aria-disabled="true"] { opacity: 0.45; box-shadow: none; cursor: not-allowed; transform: none; }
+
+/* 터치 영역 44px 보장 (sm) */
+.btn--sm { --btn-h: 36px; --btn-px: 14px; --btn-fs: 14px; }
+.btn--sm::after { content: ""; position: absolute; inset: -4px 0; }
+.btn--lg { --btn-h: 52px; --btn-px: 28px; --btn-fs: 16px; }
+.btn--block { display: flex; width: 100%; }
+
+.btn--primary { background: var(--brand-gradient); color: var(--text-on-brand); box-shadow: var(--shadow-glow); }
+
+.btn--secondary {
+  background: var(--glass-bg-strong); color: var(--text-strong);
+  -webkit-backdrop-filter: blur(var(--glass-blur)); backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--shadow-sm), var(--glass-inset);
+}
+
+.btn--ghost { background: transparent; color: var(--brand-600); }
+
+.btn--soft { background: var(--brand-100); color: var(--brand-600); }
+
+.btn--danger { background: var(--danger); color: #fff; }
+
+/* 아이콘 버튼 */
+.btn--icon { --btn-px: 0; width: var(--btn-h); padding: 0; }
+.btn--icon.btn--glass {
+  background: var(--glass-bg); color: var(--text-body);
+  -webkit-backdrop-filter: blur(var(--glass-blur)); backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--shadow-sm), var(--glass-inset);
+}
+.btn--icon.btn--sm::after { inset: -4px; }
+.btn--icon.btn--lg svg { width: 22px; height: 22px; }
+
+/* 로딩 */
+.btn[aria-busy="true"] { color: transparent; pointer-events: none; }
+.btn[aria-busy="true"]::before {
+  content: ""; position: absolute; width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid currentColor; border-color: rgba(255,255,255,0.9) rgba(255,255,255,0.9) transparent transparent;
+  animation: spin 0.8s linear infinite;
+}
+.btn--secondary[aria-busy="true"]::before,
+.btn--ghost[aria-busy="true"]::before,
+.btn--soft[aria-busy="true"]::before { border-color: var(--brand-500) var(--brand-500) transparent transparent; }
+
+/* ========== 8. 칩 ========== */
+.chips { display: flex; gap: var(--space-2); overflow-x: auto; scroll-snap-type: x mandatory;
+  padding-inline: var(--page-x); margin-inline: calc(var(--page-x) * -1); scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chip {
+  flex: none; scroll-snap-align: start;
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  min-height: 44px; padding: var(--space-2) 14px;
+  border-radius: var(--radius-md);
+  background: var(--glass-bg-subtle);
+  -webkit-backdrop-filter: blur(var(--glass-blur)); backdrop-filter: blur(var(--glass-blur));
+  font: 500 var(--fs-body-sm)/20px var(--font-sans); color: var(--text-body);
+  cursor: pointer; transition: background-color var(--dur-base) var(--ease-out);
+}
+.chip__icon { width: 28px; height: 28px; border-radius: 8px; background: var(--brand-100);
+  display: grid; place-items: center; color: var(--brand-600); }
+.chip { border: 0; box-shadow: inset 0 0 0 1px var(--glass-border); }
+.chip[aria-pressed="true"] { background: var(--brand-100); box-shadow: inset 0 0 0 1px var(--brand-300); }
+
+/* ========== 9. 카드 ========== */
+/* 카드 = 머리(제목) / 몸통 / 꼬리(버튼·메타). 꼬리는 바닥에 붙는다 (6-4 규칙 4) */
+.card {
+  display: flex; flex-direction: column; min-width: 0;
+  border-radius: var(--radius-lg); padding: var(--card-pad);
+}
+.card--lg { padding: max(var(--card-pad), var(--space-5)); }
+.card--sm { padding: var(--space-3); border-radius: var(--radius-sm); }
+.card--center { justify-content: center; }          /* 꼬리 없는 짧은 카드 */
+.card__title { font-size: var(--fs-h3); font-weight: 600; color: var(--text-strong); }
+.card__title + * { margin-top: var(--space-2); }
+.card__body > * + * { margin-top: var(--space-3); }
+.card__footer { margin-top: auto; padding-top: var(--space-4); display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.card-list > * + * { margin-top: var(--space-3); }
+
+/* ========== 10. 말풍선 ========== */
+.chat { display: flex; flex-direction: column; padding-bottom: calc(56px + var(--space-4) * 2 + 24px); }
+.msg { max-width: 88%; animation: rise var(--dur-base) var(--ease-out) both; }
+.msg + .msg { margin-top: var(--space-4); }
+.msg--same + .msg--same { margin-top: var(--space-2); }
+
+.bubble { padding: 14px var(--space-4); border-radius: var(--radius-lg); font-size: var(--fs-body); line-height: var(--lh-body); }
+.msg--bot { align-self: flex-start; }
+.msg--bot .bubble {
+  background: var(--glass-bg-strong); color: var(--text-body);
+  border-top-left-radius: 8px;
+  -webkit-backdrop-filter: blur(var(--glass-blur)); backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--shadow-sm), var(--glass-inset);
+}
+.msg--me { align-self: flex-end; max-width: 82%; }
+.msg--me .bubble {
+  background: var(--brand-gradient); color: var(--text-on-brand);
+  padding: var(--space-3) var(--space-4); border-bottom-right-radius: 8px;
+  box-shadow: 0 6px 16px rgba(196, 59, 168, 0.22);
+}
+.msg__meta { margin-top: var(--space-1); }
+.msg--me .msg__meta { text-align: right; }
+.msg__actions { margin-top: var(--space-2); display: flex; flex-wrap: wrap; gap: var(--space-2); }
+
+/* 근거 조항 배지 */
+.badge {
+  display: inline-flex; align-items: center; gap: var(--space-1);
+  padding: var(--space-1) var(--space-2); border-radius: var(--radius-xs);
+  font: 600 var(--fs-caption)/var(--lh-caption) var(--font-sans); letter-spacing: 0;
+}
+.badge--info    { color: var(--info);    background: var(--info-bg); }
+.badge--success { color: var(--success); background: var(--success-bg); }
+.badge--warning { color: var(--warning); background: var(--warning-bg); }
+.badge--danger  { color: var(--danger);  background: var(--danger-bg); }
+.badges { margin-top: var(--space-2); display: flex; flex-wrap: wrap; gap: var(--space-2); }
+
+/* ========== 11. 하단 입력바 ========== */
+.composer-wrap {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: var(--z-fixed);
+  padding: var(--space-6) var(--page-x) max(var(--space-3), env(safe-area-inset-bottom));
+  /* 아래로 갈수록 배경색이 진해져서, 주의 문구가 말풍선 위에 겹쳐도 읽힌다 */
+  background: linear-gradient(to top, rgba(238, 230, 250, 0.96) 55%, rgba(238, 230, 250, 0));
+}
+.composer-wrap > * { max-width: var(--chat-max); margin-inline: auto; }
+.composer__notice { margin-bottom: var(--space-2); text-align: center; }
+.composer {
+  display: flex; align-items: flex-end; gap: var(--space-2);
+  min-height: 56px; padding: 6px 6px 6px var(--space-4);
+  border-radius: var(--radius-pill);
+  background: var(--glass-bg-strong);
+  -webkit-backdrop-filter: blur(var(--glass-blur-strong)); backdrop-filter: blur(var(--glass-blur-strong));
+  box-shadow: var(--shadow-lg), var(--glass-inset);
+}
+.composer[data-multiline="true"] { border-radius: var(--radius-lg); }
+.composer__input {
+  flex: 1; min-height: 44px; max-height: calc(16px * 1.5 * 4 + 20px);
+  padding: 10px 0; border: 0; outline: 0; resize: none; background: transparent;
+  font: 400 16px/1.5 var(--font-sans); color: var(--text-strong);
+}
+.composer__input::placeholder { color: var(--text-placeholder); }
+.composer__count { align-self: center; font-size: var(--fs-caption); color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.composer__count[data-over="true"] { color: var(--danger); }
+.btn--send svg { transform: translateX(1px); }   /* 모양 보정 (6-11 규칙 7) */
+.btn--send { --btn-h: 44px; width: 44px; padding: 0; background: var(--brand-gradient); color: #fff; box-shadow: var(--shadow-glow); }
+
+/* ========== 12. 폼 ========== */
+.field + .field { margin-top: var(--space-4); }
+.field__label { display: block; margin-bottom: var(--space-2); font-size: 14px; line-height: var(--lh-label); font-weight: 600; color: var(--text-strong); }
+.field__label small { font-size: inherit; font-weight: 500; color: var(--text-sub); }  /* 글자 크기가 섞이면 줄 높이가 늘어나므로 같은 크기 */
+.input, .textarea {
+  display: block; width: 100%;   /* inline이면 아래에 글자 기준선 틈이 생김 */ height: 48px; padding: 0 var(--space-4);
+  border-radius: var(--radius-sm); border: 1px solid rgba(164, 140, 200, 0.35);
+  background: rgba(255, 255, 255, 0.8);
+  font: 400 16px/1.5 var(--font-sans); color: var(--text-strong);
+  transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+}
+.textarea { height: auto; min-height: 120px; padding: var(--space-3) var(--space-4); resize: vertical; }
+.input::placeholder, .textarea::placeholder { color: var(--text-placeholder); }
+.input:focus, .textarea:focus { outline: none; border-color: var(--brand-500); box-shadow: 0 0 0 4px rgba(196, 59, 168, 0.15); }
+.input[aria-invalid="true"], .textarea[aria-invalid="true"] { border-color: var(--danger); }
+.field__help, .field__error { margin-top: var(--space-2); font-size: var(--fs-caption); line-height: var(--lh-caption); }
+.field__help { color: var(--text-muted); }
+.field__error { color: var(--danger); display: flex; gap: var(--space-1); align-items: flex-start; }
+.form__actions { margin-top: var(--space-6); display: flex; gap: var(--space-2); }
+
+/* ========== 13. 모달 / 바텀시트 ========== */
+.overlay { position: fixed; inset: 0; z-index: var(--z-overlay); background: rgba(35, 28, 54, 0.25);
+  -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); display: flex; align-items: flex-end; }
+.sheet {
+  width: 100%; max-height: 90dvh; overflow: auto;
+  padding: var(--space-2) var(--space-6) max(var(--space-6), env(safe-area-inset-bottom));
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  background: var(--glass-bg-strong);
+  -webkit-backdrop-filter: blur(var(--glass-blur-strong)); backdrop-filter: blur(var(--glass-blur-strong));
+  box-shadow: var(--shadow-lg), var(--glass-inset);
+  animation: sheet-up var(--dur-slow) var(--ease-out) both;
+}
+.sheet__handle { width: 36px; height: 4px; border-radius: 2px; background: rgba(35, 28, 54, 0.15); margin: 0 auto var(--space-5); }
+.sheet__title + * { margin-top: var(--space-2); }
+.sheet__actions { margin-top: var(--space-6); display: flex; flex-direction: column; gap: var(--space-2); }
+@media (min-width: 768px) {
+  .overlay { align-items: center; justify-content: center; }
+  .sheet { max-width: 480px; border-radius: var(--radius-lg); padding-top: var(--space-6); }
+  .sheet__handle { display: none; }
+  .sheet__actions { flex-direction: row-reverse; }
+}
+
+/* ========== 14. 토스트 ========== */
+.toast {
+  position: fixed; top: var(--space-4); left: 50%; transform: translateX(-50%); z-index: var(--z-toast);
+  max-width: calc(100% - 32px);
+  display: flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-3) var(--space-4); border-radius: var(--radius-md);
+  font-size: var(--fs-body-sm);
+}
+
+/* ========== 15. 구(Orb) ========== */
+.orb {
+  --orb-size: 160px;
+  position: relative; width: var(--orb-size); aspect-ratio: 1; border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 30%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 32%),
+    radial-gradient(circle at 70% 70%, var(--glow-sky) 0%, transparent 55%),
+    radial-gradient(circle at 30% 75%, var(--glow-peach) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, var(--glow-magenta) 0%, var(--glow-pink) 45%, var(--glow-lilac) 100%);
+  box-shadow:
+    0 0 0 14px rgba(255,255,255,0.35),
+    0 0 0 28px rgba(255,255,255,0.18),
+    0 24px 60px rgba(196, 59, 168, 0.30);
+  animation: breathe 6s var(--ease-out) infinite alternate;
+}
+.orb--sm { --orb-size: 32px; box-shadow: 0 0 0 4px rgba(255,255,255,0.4), 0 6px 16px rgba(196,59,168,0.3); }
+@media (min-width: 1024px) { .orb:not(.orb--sm) { --orb-size: 220px; } }
+
+/* ========== 16. 표 (담당자 화면) ========== */
+.table { width: 100%; border-collapse: collapse; font-size: var(--fs-body-sm); }
+.table th { padding: var(--space-3) var(--space-4); text-align: left; font-size: var(--fs-caption); font-weight: 600; color: var(--text-sub); }
+.table td { height: 52px; padding: var(--space-3) var(--space-4); border-top: 1px solid var(--glass-border-soft); }
+
+/* ========== 16-1. hover — 마우스가 있는 기기에서만 (터치 화면에 눌린 색이 남지 않게) ========== */
+@media (hover: hover) {
+  .btn--primary:hover { filter: brightness(1.06); box-shadow: 0 10px 28px rgba(196, 59, 168, 0.45); }
+  .btn--secondary:hover { background: rgba(255, 255, 255, 0.9); }
+  .btn--ghost:hover { background: var(--brand-100); }
+  .btn--soft:hover { background: #F7D3EC; }
+  .btn--danger:hover { filter: brightness(1.06); }
+  .chip:hover { background: var(--glass-bg-strong); }
+}
+
+/* ========== 17. 그리드 · 레이아웃 (6장) ========== */
+/* 기본: 모든 자식은 한 줄 전체. span 클래스로 칸 수를 정한다.
+   같은 줄 박스는 자동으로 높이가 같아진다 (align-items: stretch). */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
+  gap: var(--gutter);
+  align-items: stretch;
+}
+.grid > * { min-width: 0; grid-column: 1 / -1; }
+
+/* mobile (4칸) */
+.m-span-2 { grid-column: span 2; }
+.m-span-4 { grid-column: span 4; }
+
+/* tablet (8칸) */
+@media (min-width: 768px) {
+  .t-span-2 { grid-column: span 2; }
+  .t-span-4 { grid-column: span 4; }
+  .t-span-8 { grid-column: span 8; }
+}
+
+/* desktop (12칸) */
+@media (min-width: 1024px) {
+  .d-span-2  { grid-column: span 2; }
+  .d-span-3  { grid-column: span 3; }
+  .d-span-4  { grid-column: span 4; }
+  .d-span-6  { grid-column: span 6; }
+  .d-span-8  { grid-column: span 8; }
+  .d-span-12 { grid-column: span 12; }
+}
+
+/* 자주 쓰는 배치 묶음: mobile 1열 → tablet 2열 → desktop N열 */
+.layout-2, .layout-3, .layout-4 { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gutter); align-items: stretch; }
+.layout-2 > *, .layout-3 > *, .layout-4 > * { min-width: 0; }
+@media (min-width: 768px) {
+  .layout-2, .layout-3, .layout-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* 외톨이 금지: 2열일 때 개수가 홀수면 마지막 박스를 줄 전체로 */
+  .layout-3 > :last-child:nth-child(odd),
+  .layout-4 > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
+@media (min-width: 1024px) {
+  .layout-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .layout-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .layout-3 > :last-child:nth-child(odd),
+  .layout-4 > :last-child:nth-child(odd) { grid-column: auto; }
+}
+
+/* 2:1 쌓기 — 짧은 박스 2개를 세로로 쌓아 긴 박스 옆에 (6-4 규칙 3) */
+.stack-pair { display: grid; grid-template-rows: 1fr 1fr; gap: var(--gutter); min-width: 0; }
+
+/* 본문 한 줄 길이 제한 */
+.measure { max-width: var(--measure); }
+
+/* 높이가 낮은 화면 (가로로 눕힌 휴대폰) */
+@media (max-height: 500px) and (orientation: landscape) {
+  .header { position: static; }
+  .orb:not(.orb--sm) { --orb-size: 96px; }
+}
+
+/* ========== 18. 애니메이션 ========== */
+@keyframes rise     { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes sheet-up { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes breathe  { from { transform: scale(1); } to { transform: scale(1.04); } }
+@keyframes spin     { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important; animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important; scroll-behavior: auto !important;
+  }
+}
+</style>
+<style>
+  /* ---- 미리보기 페이지 전용 (DESIGN.md 규칙 밖) ---- */
+  .pv-head { padding: var(--space-10) 0 var(--space-6); }
+  .pv-head .t-caption { text-transform: uppercase; letter-spacing: 0.08em; }
+  .pv-wrap { max-width: var(--wide-max); margin-inline: auto; padding-inline: var(--page-x); }
+  .pv-section { margin-top: var(--space-12); }
+  .pv-section > h2 { margin-bottom: var(--space-4); }
+
+  .phones { display: flex; flex-wrap: wrap; gap: var(--space-6); justify-content: center; }
+  .phone-col { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); }
+  .phone {
+    position: relative; width: min(375px, calc(100vw - 32px)); height: 760px;
+    border-radius: 44px; overflow: hidden;
+    border: 1px solid var(--glass-border);
+    background: var(--bg-gradient);
+    box-shadow: var(--shadow-lg), var(--glass-inset);
+    transform: translateZ(0); /* fixed 요소를 폰 안에 가둠 */
+  }
+  .phone .bg-blobs::before { width: 260px; height: 260px; top: -60px; left: -80px; }
+  .phone .bg-blobs::after  { width: 240px; height: 240px; bottom: 60px; right: -90px; }
+  .phone__status { height: 44px; display: flex; align-items: center; justify-content: space-between;
+    padding: 0 28px; font-size: 14px; font-weight: 600; color: var(--text-strong); }
+  .phone__scroll { position: absolute; inset: 44px 0 0; overflow-y: auto; scrollbar-width: none; }
+  .phone__scroll::-webkit-scrollbar { display: none; }
+  .phone .header { top: 0; }
+  .phone .container { padding-inline: var(--space-4); }
+
+  .hero { display: flex; flex-direction: column; align-items: center; text-align: center; padding-top: var(--space-8); }
+  .hero .orb { margin-bottom: var(--space-10); }
+  .phone { --page-x: 16px; --header-h: 56px; --fs-display: 34px; --fs-h1: 26px; --fs-h2: 20px;
+    --lh-display: 44px; --lh-h1: 36px; --lh-h2: 28px; --grid-cols: 4; --gutter: 16px; --card-pad: 16px; }
+  .phone main { padding-bottom: 150px; }
+  .phone .hero { padding-top: var(--space-6); }
+  .phone .hero .orb { --orb-size: 140px; margin-bottom: var(--space-8); }
+  /* 폰 안에서는 화면 폭과 상관없이 모바일 바텀시트로 */
+  .phone .overlay { align-items: flex-end; justify-content: stretch; }
+  .phone .sheet { max-width: none; max-height: 92%; border-radius: var(--radius-xl) var(--radius-xl) 0 0; }
+  .phone .sheet__handle { display: block; }
+  .phone .sheet__actions { flex-direction: column; }
+  .typing { display: flex; align-items: center; gap: var(--space-2); margin-top: var(--space-4); }
+
+  .swatch { border-radius: var(--radius-md); overflow: hidden; padding: 0; }
+  .swatch__chip { height: 72px; }
+  .swatch__info { padding: var(--space-2) var(--space-3) var(--space-3); }
+  .swatch__info strong { display: block; font-size: 14px; color: var(--text-strong); }
+
+  /* 그리드 보기: DESIGN.md 6-1의 칸과 거터를 화면에 겹쳐 보여 줌 */
+  .pv-wrap { position: relative; }
+  .pv-grid { position: absolute; inset: 0; padding-inline: var(--page-x); pointer-events: none; z-index: 5; display: none; }
+  .pv-grid.is-on { display: grid; grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr)); gap: var(--gutter); }
+  .pv-grid span { background: rgba(196, 59, 168, 0.07); border-inline: 1px solid rgba(196, 59, 168, 0.18); }
+  @media (max-width: 1023px) { .pv-grid span:nth-child(n+9) { display: none; } }
+  @media (max-width: 767px) { .pv-grid span:nth-child(n+5) { display: none; } }
+  .pv-head__row { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--space-4); }
+  .row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+  .row + .row { margin-top: var(--space-4); }
+  .type-row { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-3) 0; box-shadow: inset 0 1px 0 var(--glass-border-soft); }
+  .type-row:first-of-type { box-shadow: none; }
+  .type-row .t-caption { width: 120px; flex: none; }
+  .grid > .field + .field { margin-top: 0; }
+  .pv-foot { padding: var(--space-16) 0 var(--space-10); text-align: center; }
+  .chips.chips--inline { margin-inline: 0; padding-inline: 0; flex-wrap: wrap; overflow: visible; }
+</style>
+</head>
+<body>
+<div class="bg-blobs" aria-hidden="true"></div>
+
+<!-- 아이콘 -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-send" viewBox="0 0 24 24"><path fill="currentColor" d="M3.4 20.4 21 12 3.4 3.6l-.1 6.5L15 12 3.3 13.9z"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M4 7h16M4 12h16M4 17h10"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15 5l-7 7 7 7"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 7.5V12l3 2"/></symbol>
+  <symbol id="i-won" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 6l3.5 12L12 8l4.5 10L20 6M3 11h18"/></symbol>
+  <symbol id="i-award" viewBox="0 0 24 24"><circle cx="12" cy="9" r="5.5" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M8.5 13.5 7 21l5-2.5 5 2.5-1.5-7.5"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M4.5 20c1.2-3.6 4-5.5 7.5-5.5s6.3 1.9 7.5 5.5"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 7.5v5.5M12 16.4v.1"/></symbol>
+</svg>
+
+<div class="pv-wrap">
+  <div class="pv-grid" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+  <header class="pv-head pv-head__row">
+    <div class="stack-3">
+      <p class="t-caption">Design preview · DESIGN.md</p>
+      <h1 class="t-h1"><span class="t-accent">AX마스터</span> 학사 챗봇 디자인</h1>
+      <p class="t-sub measure">DESIGN.md의 토큰과 CSS만으로 만든 화면이에요. 폰 화면 안쪽은 스크롤할 수 있어요.</p>
+    </div>
+    <button class="btn btn--secondary btn--sm" type="button" id="grid-toggle" aria-pressed="false">그리드 보기</button>
+  </header>
+
+  <!-- ===== 폰 화면 3개 ===== -->
+  <div class="phones">
+    <!-- 1. 첫 화면 -->
+    <div class="phone-col">
+      <div class="phone">
+        <div class="bg-blobs" aria-hidden="true"></div>
+        <div class="phone__status"><span>9:41</span><span>●●● ▮</span></div>
+        <div class="phone__scroll">
+          <header class="header" style="background:transparent;border:0;-webkit-backdrop-filter:none;backdrop-filter:none">
+            <button class="btn btn--secondary btn--sm"><svg><use href="#i-award"/></svg>제2기 AX마스터</button>
+            <button class="btn btn--icon btn--glass btn--sm" aria-label="메뉴"><svg><use href="#i-menu"/></svg></button>
+          </header>
+          <main class="container">
+            <section class="hero">
+              <div class="orb" aria-hidden="true"></div>
+              <h1 class="t-display"><em>안녕하세요,</em><br />무엇이 궁금하세요?</h1>
+              <p class="t-sub" style="margin-top:var(--space-3)">학사규정을 근거로 바로 답해 드리고, 판단이 필요한 문의는 담당자에게 이어 드려요.</p>
+            </section>
+            <section class="section" style="margin-top:var(--space-8)">
+              <div class="chips" role="list">
+                <button class="chip" role="listitem"><span class="chip__icon"><svg width="16" height="16"><use href="#i-check"/></svg></span>공결 인정 사유</button>
+                <button class="chip" role="listitem"><span class="chip__icon"><svg width="16" height="16"><use href="#i-clock"/></svg></span>지각 기준</button>
+                <button class="chip" role="listitem"><span class="chip__icon"><svg width="16" height="16"><use href="#i-won"/></svg></span>환불 계산</button>
+                <button class="chip" role="listitem"><span class="chip__icon"><svg width="16" height="16"><use href="#i-award"/></svg></span>수료 요건</button>
+              </div>
+            </section>
+          </main>
+          <div class="composer-wrap">
+            <p class="composer__notice t-caption">성적 등 개인정보는 입력하지 마세요.</p>
+            <form class="composer" onsubmit="return false">
+              <textarea class="composer__input" rows="1" placeholder="학사규정을 물어보세요" aria-label="질문 입력"></textarea>
+              <button class="btn btn--send btn--icon" aria-label="보내기"><svg><use href="#i-send"/></svg></button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <p class="t-caption">① 첫 화면 — 구, 인사말, 추천 칩</p>
+    </div>
+
+    <!-- 2. 대화 -->
+    <div class="phone-col">
+      <div class="phone">
+        <div class="bg-blobs" aria-hidden="true"></div>
+        <div class="phone__status"><span>9:41</span><span>●●● ▮</span></div>
+        <div class="phone__scroll">
+          <header class="header">
+            <button class="btn btn--icon btn--glass btn--sm" aria-label="뒤로"><svg><use href="#i-back"/></svg></button>
+            <strong style="font-size:var(--fs-h3)">학사 도우미</strong>
+            <button class="btn btn--icon btn--glass btn--sm" aria-label="닫기"><svg><use href="#i-close"/></svg></button>
+          </header>
+          <main class="container" style="padding-top:var(--space-6)">
+            <section class="chat" aria-live="polite">
+              <div class="msg msg--me">
+                <div class="bubble">면접 때문에 결석하면 공결되나요?</div>
+                <p class="msg__meta t-caption">오전 10:12</p>
+              </div>
+              <div class="msg msg--bot">
+                <div class="bubble">채용업체의 면접·필기전형 참가는 전체 교육기간 중 <strong>10일까지</strong> 공결로 인정돼요. 면접확인서, 수험표, 전형안내 메일 중 하나를 증빙으로 내야 해요.</div>
+                <div class="badges"><span class="badge badge--info">제7조 출석인정</span></div>
+              </div>
+              <div class="msg msg--me">
+                <div class="bubble">어제 아파서 못 갔는데 병원은 안 갔어요. 제 경우도 공결 되나요?</div>
+              </div>
+              <div class="msg msg--bot">
+                <div class="bubble">규정상 병가는 병원 진료 후 처방전이나 진료확인서를 낸 <strong>당일</strong>에 인정되고, 약국 영수증은 증빙으로 쓸 수 없어요.<br /><br />개인 사정에 따른 인정 여부는 담당자가 판단해요. 담당자에게 접수해 드릴까요?</div>
+                <div class="badges"><span class="badge badge--info">제7조 병가 인정 원칙</span></div>
+                <div class="msg__actions">
+                  <button class="btn btn--soft btn--sm"><svg><use href="#i-user"/></svg>담당자에게 접수하기</button>
+                </div>
+              </div>
+              <div class="typing">
+                <div class="orb orb--sm" aria-hidden="true"></div>
+                <span class="t-caption">답변을 준비하고 있어요…</span>
+              </div>
+            </section>
+          </main>
+          <div class="composer-wrap">
+            <p class="composer__notice t-caption">성적 등 개인정보는 입력하지 마세요.</p>
+            <form class="composer" onsubmit="return false">
+              <textarea class="composer__input" rows="1" aria-label="질문 입력">지각 3번이면 벌점이 몇 점이에요?</textarea>
+              <span class="composer__count">19/500</span>
+              <button class="btn btn--send btn--icon" aria-label="보내기"><svg><use href="#i-send"/></svg></button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <p class="t-caption">② 대화 — 말풍선, 근거 배지, 접수 연결</p>
+    </div>
+
+    <!-- 3. 접수 바텀시트 -->
+    <div class="phone-col">
+      <div class="phone">
+        <div class="bg-blobs" aria-hidden="true"></div>
+        <div class="phone__status"><span>9:41</span><span>●●● ▮</span></div>
+        <div class="phone__scroll">
+          <header class="header">
+            <button class="btn btn--icon btn--glass btn--sm" aria-label="뒤로"><svg><use href="#i-back"/></svg></button>
+            <strong style="font-size:var(--fs-h3)">학사 도우미</strong>
+            <span style="width:36px"></span>
+          </header>
+          <main class="container" style="padding-top:var(--space-6)">
+            <div class="msg msg--bot"><div class="bubble">담당자에게 접수할 내용을 적어 주세요.</div></div>
+          </main>
+        </div>
+        <div class="overlay">
+          <div class="sheet" role="dialog" aria-labelledby="sheet-title">
+            <div class="sheet__handle"></div>
+            <h2 id="sheet-title" class="t-h2 sheet__title">담당자에게 접수</h2>
+            <p class="t-sub">기수, 이름, 연락처, 내용만 받아요. 성적 같은 개인정보는 적지 마세요.</p>
+            <form style="margin-top:var(--space-6)" onsubmit="return false">
+              <div class="field">
+                <label class="field__label" for="f1">기수 <small>(필수)</small></label>
+                <input class="input" id="f1" value="제2기" />
+              </div>
+              <div class="field">
+                <label class="field__label" for="f2">이름 <small>(필수)</small></label>
+                <input class="input" id="f2" placeholder="홍길동" />
+              </div>
+              <div class="field">
+                <label class="field__label" for="f3">연락처 <small>(필수)</small></label>
+                <input class="input" id="f3" value="010-12" aria-invalid="true" aria-describedby="f3e" />
+                <p class="field__error" id="f3e"><svg width="16" height="16"><use href="#i-alert"/></svg>연락처를 끝까지 적어 주세요. 예: 010-1234-5678</p>
+              </div>
+              <div class="field">
+                <label class="field__label" for="f4">내용 <small>(필수)</small></label>
+                <textarea class="textarea" id="f4">11월 16일 몸이 안 좋아서 결석했어요. 병원은 가지 못했어요.</textarea>
+              </div>
+              <div class="sheet__actions">
+                <button class="btn btn--primary btn--lg btn--block">접수하기</button>
+                <button class="btn btn--secondary btn--lg btn--block">취소</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <p class="t-caption">③ 접수 — 바텀시트 폼, 오류 상태</p>
+    </div>
+  </div>
+
+  <!-- ===== 레이아웃 ===== -->
+  <section class="pv-section">
+    <h2 class="t-h2">레이아웃: 같은 줄은 같은 높이, 버튼은 바닥선</h2>
+    <div class="layout-3">
+      <article class="card glass">
+        <span class="badge badge--info" style="align-self:flex-start">규정에 있음</span>
+        <h3 class="card__title" style="margin-top:var(--space-3)">바로 답변</h3>
+        <p class="t-sub">규정에 적힌 내용은 바로 답하고 근거 조항을 붙여요.</p>
+        <div class="card__footer"><button class="btn btn--soft btn--sm">예시 보기</button></div>
+      </article>
+      <article class="card glass">
+        <span class="badge badge--warning" style="align-self:flex-start">판단 필요</span>
+        <h3 class="card__title" style="margin-top:var(--space-3)">담당자 접수</h3>
+        <p class="t-sub">개인 사정이 걸린 문의는 규정 기준만 안내하고 담당자에게 접수해요. 승인 여부는 말하지 않아요.</p>
+        <div class="card__footer"><button class="btn btn--soft btn--sm">예시 보기</button></div>
+      </article>
+      <article class="card glass">
+        <span class="badge badge--danger" style="align-self:flex-start">규정에 없음</span>
+        <h3 class="card__title" style="margin-top:var(--space-3)">연락처 안내</h3>
+        <p class="t-sub">규정에 없거나 범위 밖이면 지어내지 않고 담당자 연락처를 알려 줘요.</p>
+        <div class="card__footer"><button class="btn btn--soft btn--sm">예시 보기</button></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===== 색상 ===== -->
+  <section class="pv-section">
+    <h2 class="t-h2">색상</h2>
+    <div class="grid">
+      <div class="swatch glass m-span-2 t-span-2 d-span-2"><div class="swatch__chip" style="background:var(--bg-gradient)"></div><div class="swatch__info"><strong>bg-gradient</strong><span class="t-caption">페이지 배경</span></div></div>
+      <div class="swatch glass m-span-2 t-span-2 d-span-2"><div class="swatch__chip" style="background:var(--brand-gradient)"></div><div class="swatch__info"><strong>brand-gradient</strong><span class="t-caption">#A12E92 → #C43BA8</span></div></div>
+      <div class="swatch glass m-span-2 t-span-2 d-span-2"><div class="swatch__chip" style="background:var(--brand-100)"></div><div class="swatch__info"><strong>brand-100</strong><span class="t-caption">#FBE3F3</span></div></div>
+      <div class="swatch glass m-span-2 t-span-2 d-span-2"><div class="swatch__chip" style="background:var(--accent-lavender)"></div><div class="swatch__info"><strong>accent-lavender</strong><span class="t-caption">#7B6BB0</span></div></div>
+      <div class="swatch glass m-span-2 t-span-2 d-span-2"><div class="swatch__chip" style="background:var(--glow-pink)"></div><div class="swatch__info"><strong>glow-pink</strong><span class="t-caption">#F5B8DA</span></div></div>
+      <div class="swatch glass m-span-2 t-span-2 d-span-2"><div class="swatch__chip" style="background:var(--glow-lilac)"></div><div class="swatch__info"><strong>glow-lilac</strong><span class="t-caption">#C9B6F2</span></div></div>
+      <div class="swatch glass m-span-2 t-span-2 d-span-2"><div class="swatch__chip" style="background:var(--glow-sky)"></div><div class="swatch__info"><strong>glow-sky</strong><span class="t-caption">#B9C9F5</span></div></div>
+      <div class="swatch glass m-span-2 t-span-2 d-span-2"><div class="swatch__chip" style="background:var(--glow-peach)"></div><div class="swatch__info"><strong>glow-peach</strong><span class="t-caption">#FAD3C4</span></div></div>
+      <div class="swatch glass m-span-2 t-span-2 d-span-2"><div class="swatch__chip" style="background:var(--text-strong)"></div><div class="swatch__info"><strong>text-strong</strong><span class="t-caption">#231C36</span></div></div>
+      <div class="swatch glass m-span-2 t-span-2 d-span-2"><div class="swatch__chip" style="background:var(--text-body)"></div><div class="swatch__info"><strong>text-body</strong><span class="t-caption">#3A3350</span></div></div>
+      <div class="swatch glass m-span-2 t-span-2 d-span-2"><div class="swatch__chip" style="background:var(--text-sub)"></div><div class="swatch__info"><strong>text-sub</strong><span class="t-caption">#5E5675</span></div></div>
+      <div class="swatch glass m-span-2 t-span-2 d-span-2"><div class="swatch__chip" style="background:var(--text-muted)"></div><div class="swatch__info"><strong>text-muted</strong><span class="t-caption">#736B8A</span></div></div>
+    </div>
+  </section>
+
+  <!-- ===== 글자 ===== -->
+  <section class="pv-section">
+    <h2 class="t-h2">글자</h2>
+    <div class="card card--lg glass">
+      <div class="type-row"><span class="t-caption">display</span><span class="t-display"><em>안녕하세요,</em> 무엇이든</span></div>
+      <div class="type-row"><span class="t-caption">h1</span><span class="t-h1">학사관리 규정 안내</span></div>
+      <div class="type-row"><span class="t-caption">h2</span><span class="t-h2">담당자에게 접수</span></div>
+      <div class="type-row"><span class="t-caption">h3 17</span><span class="t-h3">공결 인정 사유와 증빙</span></div>
+      <div class="type-row"><span class="t-caption">body 16</span><span>채용업체의 면접전형 참가는 전체 교육기간 중 10일까지 공결로 인정돼요.</span></div>
+      <div class="type-row"><span class="t-caption">sub 15</span><span class="t-sub">판단이 필요한 문의는 담당자에게 이어 드려요.</span></div>
+      <div class="type-row"><span class="t-caption">caption 13</span><span class="t-caption">오전 10:12 · 제7조</span></div>
+      <div class="type-row"><span class="t-caption">en serif</span><span class="t-en" style="font-size:var(--fs-h1);color:var(--accent-lavender)">How can I help you today</span></div>
+    </div>
+  </section>
+
+  <!-- ===== 버튼 ===== -->
+  <section class="pv-section">
+    <h2 class="t-h2">버튼</h2>
+    <div class="grid">
+      <div class="card glass d-span-6">
+        <h3 class="card__title">종류</h3>
+        <div class="card__body" style="margin-top:var(--space-4)">
+          <div class="row">
+            <button class="btn btn--primary">접수하기</button>
+            <button class="btn btn--secondary">취소</button>
+            <button class="btn btn--soft"><svg><use href="#i-user"/></svg>담당자 연결</button>
+            <button class="btn btn--ghost">더보기</button>
+            <button class="btn btn--danger">삭제</button>
+          </div>
+          <div class="row">
+            <button class="btn btn--icon btn--glass btn--sm" aria-label="닫기"><svg><use href="#i-close"/></svg></button>
+            <button class="btn btn--icon btn--glass" aria-label="메뉴"><svg><use href="#i-menu"/></svg></button>
+            <button class="btn btn--icon btn--glass btn--lg" aria-label="뒤로"><svg><use href="#i-back"/></svg></button>
+            <button class="btn btn--send btn--icon" aria-label="보내기"><svg><use href="#i-send"/></svg></button>
+          </div>
+        </div>
+      </div>
+      <div class="card glass d-span-6">
+        <h3 class="card__title">크기 · 상태</h3>
+        <div class="card__body" style="margin-top:var(--space-4)">
+          <div class="row">
+            <button class="btn btn--primary btn--sm">sm 36</button>
+            <button class="btn btn--primary">md 44</button>
+            <button class="btn btn--primary btn--lg">lg 52</button>
+          </div>
+          <div class="row">
+            <button class="btn btn--primary" aria-busy="true">보내는 중</button>
+            <button class="btn btn--secondary" aria-busy="true">불러오는 중</button>
+            <button class="btn btn--primary" disabled>비활성</button>
+            <button class="btn btn--secondary" disabled>비활성</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 칩 · 배지 ===== -->
+  <section class="pv-section">
+    <h2 class="t-h2">칩 · 배지</h2>
+    <div class="grid">
+      <div class="card glass t-span-4 d-span-6">
+        <h3 class="card__title">추천 칩</h3>
+        <p class="t-sub">첫 화면의 추천 질문이에요. 누르면 바로 질문이 보내져요.</p>
+        <div class="card__footer">
+          <div class="chips chips--inline">
+            <button class="chip"><span class="chip__icon"><svg width="16" height="16"><use href="#i-check"/></svg></span>공결 인정 사유</button>
+            <button class="chip" aria-pressed="true"><span class="chip__icon"><svg width="16" height="16"><use href="#i-clock"/></svg></span>선택됨</button>
+          </div>
+        </div>
+      </div>
+      <div class="card glass t-span-4 d-span-6">
+        <h3 class="card__title">배지</h3>
+        <p class="t-sub">답변의 근거 조항과 담당자 화면의 접수 상태를 표시해요.</p>
+        <div class="card__footer">
+          <span class="badge badge--info">제7조</span>
+          <span class="badge badge--success">접수 완료</span>
+          <span class="badge badge--warning">처리 중</span>
+          <span class="badge badge--danger">오류</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 입력 ===== -->
+  <section class="pv-section">
+    <h2 class="t-h2">입력 상태</h2>
+    <div class="card glass">
+      <div class="grid">
+        <div class="field t-span-4 d-span-6">
+          <label class="field__label" for="g1">기본</label>
+          <input class="input" id="g1" placeholder="이름을 적어 주세요" />
+          <p class="field__help">실명으로 적어 주세요.</p>
+        </div>
+        <div class="field t-span-4 d-span-6">
+          <label class="field__label" for="g2">오류</label>
+          <input class="input" id="g2" value="010-12" aria-invalid="true" />
+          <p class="field__error"><svg width="16" height="16"><use href="#i-alert"/></svg>연락처를 끝까지 적어 주세요.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="pv-foot t-caption">DESIGN.md 기준 · preview/design.css는 DESIGN.md 9장에서 뽑아낸 코드</footer>
+</div>
+<script>
+  document.getElementById('grid-toggle').addEventListener('click', function () {
+    var on = document.querySelector('.pv-grid').classList.toggle('is-on');
+    this.setAttribute('aria-pressed', on);
+    this.textContent = on ? '그리드 숨기기' : '그리드 보기';
+  });
+</script>
+</body>
+</html>
