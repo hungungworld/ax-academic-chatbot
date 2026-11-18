@@ -63,6 +63,24 @@ function Point({ text }: { text: string }) {
   );
 }
 
+/** 답변 아래 "이어서 물어보기" 질문 칩. 누르면 바로 보낸다 */
+function FollowUps({ items, onPick }: { items: string[]; onPick: (q: string) => void }) {
+  if (!items.length) return null;
+  return (
+    <nav className="followups" aria-label="이어서 물어보기">
+      <p className="followups__title t-caption">이어서 물어보기</p>
+      <div className="followups__list">
+        {items.map((q) => (
+          <button key={q} type="button" className="chip followups__chip" onClick={() => onPick(q)}>
+            <IconSend size={14} />
+            {q}
+          </button>
+        ))}
+      </div>
+    </nav>
+  );
+}
+
 /** 구조화된 답변: 핵심 한 줄(굵게) → 번호 목록 → 참고 상자 */
 function AnswerBody({ reply }: { reply: ChatReply }) {
   return (
@@ -124,7 +142,8 @@ export function Chat() {
   }, [input]);
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    // 맨 아래까지 내린다 (입력창에 가리지 않도록 아래 여백까지 포함)
+    if (endRef.current) window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
   }, [messages, loading]);
 
   useEffect(() => {
@@ -168,6 +187,13 @@ export function Chat() {
   const lastUserBefore = (index: number) => {
     for (let i = index - 1; i >= 0; i--) if (messages[i].role === "user") return messages[i].text;
     return null;
+  };
+
+  /** 모델이 준 이어질 질문, 없으면 아직 안 물어본 추천 질문 */
+  const followupsFor = (r?: ChatReply) => {
+    if (r?.followups?.length) return r.followups;
+    const asked = new Set(messages.filter((m) => m.role === "user").map((m) => m.text));
+    return SUGGESTIONS.filter((s) => !asked.has(s.q)).slice(0, 3).map((s) => s.q);
   };
 
   const reset = () => {
@@ -216,7 +242,9 @@ export function Chat() {
                 무엇이 궁금하세요?
               </h1>
               <p className="t-sub">
-                제2기 KITA 무역 AX마스터 학사규정을 근거로 바로 답해 드리고, 판단이 필요한 문의는 담당자에게 이어 드려요.
+                제2기 KITA 무역 AX마스터 학사규정을 근거로 바로 답해 드리고,
+                <br />
+                판단이 필요한 문의는 담당자에게 이어 드려요.
               </p>
             </section>
             <section className="hero-chips" aria-label="추천 질문">
@@ -287,6 +315,9 @@ export function Chat() {
                   </div>
                 )}
                 <p className="msg__meta t-caption">{m.time}</p>
+                {i === messages.length - 1 && !loading && !m.error && (
+                  <FollowUps items={followupsFor(r)} onPick={send} />
+                )}
               </div>
             );
           })}

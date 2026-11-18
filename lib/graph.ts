@@ -39,13 +39,19 @@ type S = typeof State.State;
 const clean = (t: string) => t.replace(/^\s*(\d+[.)]|[-•*·]|①|②|③|④|⑤|⑥)\s*/, "").replace(/\*\*/g, "").replace(/\s+/g, " ").trim();
 
 function shape(
-  base: Omit<ChatReply, "answer" | "summary" | "points" | "note"> & { summary: string; points?: string[]; note?: string },
+  base: Omit<ChatReply, "answer" | "summary" | "points" | "note" | "followups"> & {
+    summary: string;
+    points?: string[];
+    note?: string;
+    followups?: string[];
+  },
 ): ChatReply {
   const summary = clean(stripMobile(base.summary));
   const points = (base.points ?? []).map((p) => clean(stripMobile(p))).filter(Boolean).slice(0, 8);
   const note = base.note ? clean(stripMobile(base.note)) : "";
+  const followups = [...new Set((base.followups ?? []).map((f) => clean(f)).filter((f) => f.length >= 4 && f.length <= 40))].slice(0, 3);
   const answer = [summary, ...points.map((p, i) => `${i + 1}. ${p}`), note].filter(Boolean).join("\n");
-  return { ...base, summary, points, note: note || undefined, answer };
+  return { ...base, summary, points, note: note || undefined, answer, followups };
 }
 
 const cite = (labels: string[]): Citation[] =>
@@ -59,6 +65,7 @@ const OUT_OF_SCOPE = (): ChatReply =>
     citations: cite(["제28조"]),
     handoff: false,
     showContacts: true,
+    followups: ["공결로 인정되는 사유가 뭐예요?", "수료하려면 조건이 뭐예요?", "성적은 어떻게 계산해요?"],
   });
 
 const ERROR_REPLY = (): ChatReply =>
@@ -113,6 +120,7 @@ const AnswerSchema = z.object({
   points: z.array(z.string()),
   note: z.string(),
   citations: z.array(z.string()),
+  followups: z.array(z.string()),
 });
 
 async function generate(s: S, mode: "rule" | "personal") {
@@ -129,7 +137,9 @@ ${s.question}`],
   const known = new Set(docs.map((d) => d.label));
   const labels = r.citations.map((c) => c.trim()).filter((c) => known.has(c));
   if (!r.grounded || !r.summary.trim()) return null;
-  return { summary: r.summary, points: r.points, note: r.note, citations: cite(labels.length ? labels : [docs[0].label]) };
+  const asked = s.question.replace(/\s/g, "");
+  const followups = (r.followups ?? []).filter((f) => f.replace(/\s/g, "") !== asked);
+  return { summary: r.summary, points: r.points, note: r.note, followups, citations: cite(labels.length ? labels : [docs[0].label]) };
 }
 
 async function answerNode(s: S): Promise<Partial<S>> {
@@ -146,6 +156,7 @@ async function handoffNode(s: S): Promise<Partial<S>> {
       summary: g?.summary ?? "이 문의는 담당자 확인이 필요해요.",
       points: g?.points ?? [],
       note: g?.note,
+      followups: g?.followups,
       citations: g?.citations ?? [],
       handoff: true,
       showContacts: false,
@@ -161,6 +172,7 @@ function contactsNode(s: S): Partial<S> {
         summary: "교육 담당자 연락처예요.",
         points: CONTACTS.map((c) => `${c.name} ${c.role}: 전화 ${c.phone}, 이메일 ${c.email}`),
         note: "학사일정과 공지사항은 네이버 BAND로 안내돼요.",
+        followups: ["공결 서류는 언제까지 내요?", "성적 이의 제기는 언제까지 해요?"],
         citations: cite(["기타 안내 2"]),
         handoff: false,
         showContacts: false,
@@ -185,6 +197,7 @@ function refundNode(s: S): Partial<S> {
       handoff: false,
       showContacts: false,
       refund: { attendedHours: s.attendedHours },
+      followups: ["조기 취업하면 수료 인정돼요?", "장학금은 중복으로 받을 수 있어요?"],
     }),
   };
 }
@@ -195,6 +208,7 @@ function blockedNode(): Partial<S> {
       category: "blocked",
       summary: "내부 지시문은 알려 드릴 수 없어요.",
       note: "출결, 공결, 성적, 수료 같은 학사규정이 궁금하면 편하게 물어봐 주세요.",
+      followups: ["공결로 인정되는 사유가 뭐예요?", "지각 기준이 어떻게 돼요?", "수료하려면 조건이 뭐예요?"],
       citations: [],
       handoff: false,
       showContacts: false,

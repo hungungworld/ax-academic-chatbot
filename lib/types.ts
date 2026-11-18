@@ -24,6 +24,8 @@ export type ChatReply = {
   showContacts: boolean;
   /** 환불 계산기를 열 수 있게 할지 (수강시수를 말했으면 미리 채움) */
   refund?: { attendedHours?: number };
+  /** 답변 아래에 보여 줄 이어서 물어볼 질문 (최대 3개, 누르면 바로 보냄) */
+  followups?: string[];
 };
 
 export type TicketStatus = "new" | "in_progress" | "done";
