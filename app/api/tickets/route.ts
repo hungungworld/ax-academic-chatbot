@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { dbReady, insertTicket, type NewTicket } from "@/lib/db";
-import { clientKey, MAX_QUESTION_CHARS, rateLimited, TICKET_LIMITS as L } from "@/lib/limits";
+import { attachVisitor, checkLimit, MAX_QUESTION_CHARS, TICKET_LIMITS as L } from "@/lib/limits";
 import { mailReady, sendTicketMail } from "@/lib/mail";
 
 export const runtime = "nodejs";
@@ -31,8 +31,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "입력 내용을 확인해 주세요.", fieldErrors }, { status: 400 });
   }
 
-  if (rateLimited("ticket", clientKey(req.headers)))
-    return NextResponse.json({ error: "접수가 너무 많아요. 잠시 뒤 다시 시도하거나 담당자에게 전화해 주세요." }, { status: 429 });
+  const limit = checkLimit("ticket", req.headers);
+  if (limit.limited)
+    return attachVisitor(NextResponse.json({ error: "접수가 너무 많아요. 잠시 뒤 다시 시도하거나 담당자에게 전화해 주세요." }, { status: 429 }), limit);
 
   const t: NewTicket = { ...parsed.data, question: parsed.data.question || null, category: parsed.data.category || null };
 
@@ -66,5 +67,5 @@ export async function POST(req: Request) {
   if (!saved && !mailed)
     return NextResponse.json({ error: "접수 중 문제가 생겼어요. 담당자에게 전화나 이메일로 문의해 주세요." }, { status: 500 });
 
-  return NextResponse.json({ ok: true, id });
+  return attachVisitor(NextResponse.json({ ok: true, id }), limit);
 }

@@ -37,6 +37,39 @@ export type ParsedSheet = {
   students: StudentRow[];
 };
 
+// ---------- 최종 성적의 출결 점수 (운영담당자 확인, 학사관리표 수식) ----------
+//   출결 점수 = MIN(100, MAX(0, 100 − 경미×2 − 지각·조퇴×5 − 결석×10)) × 20%
+//   → 20점 만점, 1회당 경미 −0.4 · 지각·조퇴 −1.0 · 결석 −2.0, 0점 아래로는 내려가지 않는다.
+export const GRADE_WEIGHT = { minor: 2, late: 5, absent: 10 } as const;
+export const GRADE_RATIO = 0.2;
+export const GRADE_MAX = 100 * GRADE_RATIO; // 20점
+
+export type GradeResult = {
+  counts: Omit<MonthCounts, "month">; // 전체 기간 횟수
+  lines: { label: string; count: number; each: number; total: number }[]; // 항목별 감점 (최종 점수 기준, 음수 아님)
+  deduction: number; // 최종 점수에서 빠지는 점수 (0~20)
+  score: number; // 출결 점수 (0~20)
+};
+
+/** 0.1점 단위로 정확히 맞춘다 (0.4×3 = 1.2000000000000002 같은 부동소수 오차 제거) */
+const tenth = (n: number) => Math.round(n * 10) / 10;
+
+export function attendanceGrade(counts: Omit<MonthCounts, "month">): GradeResult {
+  const raw = Math.min(100, Math.max(0, 100 - counts.minor * GRADE_WEIGHT.minor - counts.late * GRADE_WEIGHT.late - counts.absent * GRADE_WEIGHT.absent));
+  const score = tenth(raw * GRADE_RATIO);
+  const line = (label: string, count: number, w: number) => ({ label, count, each: tenth(w * GRADE_RATIO), total: tenth(count * w * GRADE_RATIO) });
+  return {
+    counts,
+    lines: [
+      line("경미한 지각·퇴실 누락", counts.minor, GRADE_WEIGHT.minor),
+      line("지각·조퇴", counts.late, GRADE_WEIGHT.late),
+      line("결석", counts.absent, GRADE_WEIGHT.absent),
+    ],
+    deduction: tenth(GRADE_MAX - score),
+    score,
+  };
+}
+
 export type AttendanceRecord = {
   no: number;
   name: string;
@@ -47,6 +80,7 @@ export type AttendanceRecord = {
   excused: Excused[] | null;
   excusedMonth: number | null; // 벌점·공결 누적값을 읽은 달 (이번 달 칸이 비어 있으면 지난달)
   monthly: MonthCounts[]; // 지난달부터 이번 달까지, 달 순서대로
+  grade: GradeResult; // 월별 횟수를 더해 계산한 최종 성적 출결 점수 (참고값)
 };
 
 export type LookupResult =
@@ -198,6 +232,12 @@ export function lookup(sheets: ParsedSheet[], name: string, no: number | null, t
   // 같은 사람은 번호로 따라간다 (달마다 줄 순서가 같다는 보장이 없어서 이름+번호로 맞춘다)
   const rowIn = (s: ParsedSheet) => s.students.find((r) => r.no === me.no && normalizeName(r.name) === target);
   const withExcused = [...usable].reverse().find((s) => rowIn(s)?.excused);
+  const monthly = usable.flatMap((s) => {
+    const r = rowIn(s);
+    return r ? [{ month: s.month, ...r.counts }] : [];
+  });
+  // 경미·지각·결석 횟수는 그달 값이라 여기서는 더한다 (누적값인 벌점·공결과 다르다)
+  const totals = monthly.reduce((t, m) => ({ minor: t.minor + m.minor, late: t.late + m.late, absent: t.absent + m.absent }), { minor: 0, late: 0, absent: 0 });
   return {
     status: "ok",
     record: {
@@ -210,10 +250,8 @@ export function lookup(sheets: ParsedSheet[], name: string, no: number | null, t
       penalty: withExcused ? rowIn(withExcused)!.penalty : me.penalty,
       excused: withExcused ? rowIn(withExcused)!.excused : null,
       excusedMonth: withExcused?.month ?? null,
-      monthly: usable.flatMap((s) => {
-        const r = rowIn(s);
-        return r ? [{ month: s.month, ...r.counts }] : [];
-      }),
+      monthly,
+      grade: attendanceGrade(totals),
     },
   };
 }

@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { lookup, parseCsv, parseDateCell, parseSheet, type ParsedSheet } from "../lib/attendance.ts";
+import { attendanceGrade, lookup, parseCsv, parseDateCell, parseSheet, type ParsedSheet } from "../lib/attendance.ts";
 
 // 실제 출석부와 같은 모양의 가짜 시트 (이름은 모두 가짜)
 // 1행: 공결 칸(8번째 열부터) 위에 "최대 N일". 앞 두 칸에는 운영진이 반영일을 적을 수 있다.
@@ -86,4 +86,26 @@ test("반영일 형식: 날짜만, 한 칸에 '반영일: 11/18'", () => {
   assert.equal(parseDateCell("아직", 2026), null);
   const s = sheet({ top: topRow("반영일: 11/18"), d1: "2026-11-02", d2: "2026-11-03", rows: ["1,박마바,0,,,,,0,0,0,0,0,0,,0,0,0"] });
   assert.equal(s.asOf, "2026-11-18");
+});
+
+test("최종 성적 출결 점수: 1회당 경미 −0.4, 지각 −1, 결석 −2 (20점 만점)", () => {
+  const g = attendanceGrade({ minor: 3, late: 1, absent: 1 });
+  assert.deepEqual(g.lines.map((l) => [l.each, l.total]), [[0.4, 1.2], [1, 1], [2, 2]]);
+  assert.equal(g.deduction, 4.2);
+  assert.equal(g.score, 15.8);
+  assert.deepEqual(attendanceGrade({ minor: 0, late: 0, absent: 0 }), { ...attendanceGrade({ minor: 0, late: 0, absent: 0 }), deduction: 0, score: 20 });
+});
+
+test("출결 점수는 0점 아래로 내려가지 않는다", () => {
+  const g = attendanceGrade({ minor: 0, late: 0, absent: 11 }); // 원점수 100 − 110 → 0
+  assert.equal(g.score, 0);
+  assert.equal(g.deduction, 20);
+});
+
+test("조회 결과의 출결 점수는 월별 횟수를 더해 계산한다", () => {
+  const r = lookup(ALL, "김가나", 1, "2026-11-19"); // 10월 경미 1 + 11월 경미 1
+  assert.equal(r.status, "ok");
+  if (r.status !== "ok") return;
+  assert.deepEqual(r.record.grade.counts, { minor: 2, late: 0, absent: 0 });
+  assert.equal(r.record.grade.score, 19.2);
 });

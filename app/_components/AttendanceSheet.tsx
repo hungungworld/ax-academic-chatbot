@@ -16,6 +16,8 @@ const fmtDay = (iso: string) => {
   const wd = "일월화수목금토"[new Date(`${iso}T00:00:00Z`).getUTCDay()];
   return `${Number(iso.slice(5, 7))}/${Number(iso.slice(8, 10))}(${wd})`;
 };
+/** 0.1점 단위 점수: 18 → "18", 18.6 → "18.6" */
+const pt = (n: number) => (Number.isInteger(n) ? String(n) : n.toFixed(1));
 const days = (n: number) => `${Number.isInteger(n) ? n : n.toFixed(1)}일`;
 
 function AsOf({ r }: { r: AttendanceRecord }) {
@@ -48,6 +50,25 @@ function Result({ r }: { r: AttendanceRecord }) {
       <section className="att-block">
         <h3 className="att-block__title">출결 벌점 <small>전체 기간 누적</small></h3>
         <p className="att-penalty">{r.penalty === null ? "기록 없음" : `${r.penalty}점`}</p>
+      </section>
+
+      <section className="att-block">
+        <h3 className="att-block__title">최종 성적 출결 점수 <small>20점 만점</small></h3>
+        <p className="att-penalty">
+          {pt(r.grade.score)}점 <span className="att-max">/ 20점</span>
+          {r.grade.deduction > 0 && <span className="att-deduct">−{pt(r.grade.deduction)}점</span>}
+        </p>
+        <dl className="att-dl att-sub">
+          {r.grade.lines.map((l) => (
+            <div key={l.label} className="att-dl__row">
+              <dt>{l.label} {l.count}회 × {pt(l.each)}점</dt>
+              <dd>{l.total > 0 ? `−${pt(l.total)}점` : "0점"}</dd>
+            </div>
+          ))}
+        </dl>
+        <p className="t-caption att-sub">
+          출결은 최종 성적의 20%예요. 1회당 경미 −0.4점, 지각·조퇴 −1점, 결석 −2점이고 0점 아래로는 내려가지 않아요. 출석부 월별 횟수를 더한 참고값이라 공지되는 학사관리 점수와 다를 수 있어요.
+        </p>
       </section>
 
       <section className="att-block">

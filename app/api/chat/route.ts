@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { ask } from "@/lib/graph";
-import { clientKey, MAX_HISTORY_CHARS, MAX_HISTORY_MESSAGES, MAX_QUESTION_CHARS, rateLimited } from "@/lib/limits";
+import { attachVisitor, checkLimit, MAX_HISTORY_CHARS, MAX_HISTORY_MESSAGES, MAX_QUESTION_CHARS } from "@/lib/limits";
 import { llmProblem } from "@/lib/llm";
 import { indexProblem } from "@/lib/retrieve";
 import type { ChatTurn } from "@/lib/types";
@@ -40,8 +40,9 @@ export async function POST(req: Request) {
   if (question.length > MAX_QUESTION_CHARS)
     return NextResponse.json({ error: `질문은 ${MAX_QUESTION_CHARS}자 이내로 써 주세요.` }, { status: 400 });
 
-  if (rateLimited("chat", clientKey(req.headers)))
-    return NextResponse.json({ error: "질문이 너무 많아요. 10분쯤 뒤에 다시 물어봐 주세요." }, { status: 429 });
+  const limit = checkLimit("chat", req.headers);
+  if (limit.limited)
+    return attachVisitor(NextResponse.json({ error: "질문이 너무 많아요. 10분쯤 뒤에 다시 물어봐 주세요." }, { status: 429 }), limit);
 
   const problem = indexProblem() ?? llmProblem();
   if (problem) {
@@ -50,5 +51,5 @@ export async function POST(req: Request) {
   }
 
   const reply = await ask(question, trimHistory(parsed.data.history));
-  return NextResponse.json(reply);
+  return attachVisitor(NextResponse.json(reply), limit);
 }

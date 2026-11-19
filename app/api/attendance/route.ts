@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { attendanceProblem, loadSheets, lookup, todayKst } from "@/lib/attendance";
-import { clientKey, rateLimited } from "@/lib/limits";
+import { attachVisitor, checkLimit } from "@/lib/limits";
 
 export const runtime = "nodejs";
 
@@ -15,8 +15,9 @@ export async function POST(req: Request) {
   const parsed = Body.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "입력 내용을 확인해 주세요." }, { status: 400 });
 
-  if (rateLimited("attendance", clientKey(req.headers)))
-    return NextResponse.json({ error: "조회가 너무 많아요. 10분쯤 뒤에 다시 시도해 주세요." }, { status: 429 });
+  const limit = checkLimit("attendance", req.headers);
+  if (limit.limited)
+    return attachVisitor(NextResponse.json({ error: "조회가 너무 많아요. 10분쯤 뒤에 다시 시도해 주세요." }, { status: 429 }), limit);
 
   const problem = attendanceProblem();
   if (problem) {
@@ -26,7 +27,7 @@ export async function POST(req: Request) {
 
   try {
     const sheets = await loadSheets();
-    return NextResponse.json(lookup(sheets, parsed.data.name, parsed.data.no ?? null, todayKst()));
+    return attachVisitor(NextResponse.json(lookup(sheets, parsed.data.name, parsed.data.no ?? null, todayKst())), limit);
   } catch (e) {
     console.error("[attendance] 출석부 읽기 실패:", e instanceof Error ? e.message : e);
     return NextResponse.json({ error: "출석부를 불러오지 못했어요. 잠시 뒤 다시 시도하거나 담당자에게 문의해 주세요." }, { status: 502 });

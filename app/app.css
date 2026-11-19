@@ -172,3 +172,4 @@ a { color: var(--brand-600); }
 .att-table th, .att-table td { padding: var(--space-2) var(--space-1); text-align: center; border-top: 1px solid var(--glass-border-soft); }
 .att-table thead th { border-top: 0; font-weight: 600; color: var(--text-sub); }
 .att-table tbody th { font-weight: 600; color: var(--text-strong); }
+.att-deduct { margin-left: var(--space-2); font-size: var(--fs-body-sm); font-weight: 600; color: var(--danger); vertical-align: middle; }
