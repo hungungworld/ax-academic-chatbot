@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>생각 중 모션 미리보기</title>
+<style>
+:root{
+  --glow-pink:#F5B8DA;--glow-magenta:#E77FCF;--glow-lilac:#C9B6F2;--glow-sky:#B9C9F5;--glow-peach:#FAD3C4;
+  --text-strong:#231C36;--text-muted:#736B8A;
+  --ease-out:cubic-bezier(0.2,0.8,0.2,1);
+}
+*{box-sizing:border-box}
+body{margin:0;padding:24px 16px 48px;font-family:system-ui,"Pretendard","Malgun Gothic",sans-serif;
+  background:#FBF8FF;color:var(--text-strong);word-break:keep-all}
+h1{font-size:18px;margin:0 0 4px}
+p.lead{margin:0 0 20px;font-size:13px;color:var(--text-muted)}
+.card{background:#fff;border-radius:16px;padding:20px 18px;margin-bottom:14px;box-shadow:0 2px 12px rgba(120,80,160,.08)}
+.card h2{font-size:13px;margin:0 0 14px;color:var(--text-muted);font-weight:600}
+.t-caption{font-size:13px;font-weight:500;color:var(--text-muted)}
+.typing{display:flex;align-items:center;gap:12px;min-height:56px}
+
+/* 진주(기존) */
+.orb{
+  --orb-size:32px;position:relative;width:var(--orb-size);aspect-ratio:1;border-radius:50%;flex:none;
+  background:
+    radial-gradient(circle at 35% 30%,rgba(255,255,255,.95) 0%,rgba(255,255,255,0) 32%),
+    radial-gradient(circle at 70% 70%,var(--glow-sky) 0%,transparent 55%),
+    radial-gradient(circle at 30% 75%,var(--glow-peach) 0%,transparent 50%),
+    radial-gradient(circle at 50% 50%,var(--glow-magenta) 0%,var(--glow-pink) 45%,var(--glow-lilac) 100%);
+  box-shadow:0 0 0 4px rgba(255,255,255,.4),0 6px 16px rgba(196,59,168,.3);
+}
+
+/* A. 지금 모습 */
+.a .orb{animation:breathe 1.2s var(--ease-out) infinite alternate}
+@keyframes breathe{from{transform:scale(1)}to{transform:scale(1.04)}}
+
+/* B. 음성처럼 울리는 파문 + 말랑하게 일렁이는 진주 */
+.b .wrap{position:relative;width:44px;height:44px;flex:none;display:grid;place-items:center}
+.b .ring{position:absolute;inset:6px;border-radius:50%;
+  border:2px solid var(--glow-magenta);opacity:0;animation:ripple 1.8s ease-out infinite}
+.b .ring:nth-child(2){animation-delay:.6s}
+.b .ring:nth-child(3){animation-delay:1.2s}
+@keyframes ripple{0%{transform:scale(.8);opacity:.55}100%{transform:scale(1.9);opacity:0}}
+.b .orb{animation:squish 1.6s ease-in-out infinite;position:relative;z-index:1}
+@keyframes squish{
+  0%,100%{transform:scale(1,1);border-radius:50%}
+  25%{transform:scale(1.1,.92);border-radius:52% 48% 50% 50%}
+  50%{transform:scale(.93,1.1);border-radius:48% 52% 50% 50%}
+  75%{transform:scale(1.06,.96);border-radius:50%}
+}
+
+/* C. 진주 옆에서 음성 파형처럼 쫘르르 움직이는 막대 */
+.c .orb{animation:squish 1.6s ease-in-out infinite}
+.c .bars{display:flex;align-items:center;gap:3px;height:24px}
+.c .bars i{display:block;width:3px;height:6px;border-radius:2px;
+  background:linear-gradient(var(--glow-magenta),var(--glow-lilac));animation:wave 1s ease-in-out infinite}
+.c .bars i:nth-child(1){animation-delay:0s}
+.c .bars i:nth-child(2){animation-delay:.12s}
+.c .bars i:nth-child(3){animation-delay:.24s}
+.c .bars i:nth-child(4){animation-delay:.36s}
+.c .bars i:nth-child(5){animation-delay:.48s}
+.c .bars i:nth-child(6){animation-delay:.6s}
+@keyframes wave{0%,100%{height:5px;opacity:.6}50%{height:22px;opacity:1}}
+
+/* D. B + 문구 뒤로 빛이 지나가는 효과(추천) */
+.d .wrap{position:relative;width:44px;height:44px;flex:none;display:grid;place-items:center}
+.d .ring{position:absolute;inset:6px;border-radius:50%;
+  border:2px solid var(--glow-magenta);opacity:0;animation:ripple 1.8s ease-out infinite}
+.d .ring:nth-child(2){animation-delay:.9s}
+.d .orb{animation:squish 1.6s ease-in-out infinite;position:relative;z-index:1}
+.d .shine{
+  background:linear-gradient(100deg,var(--text-muted) 35%,#E77FCF 50%,var(--text-muted) 65%);
+  background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:shine 1.8s linear infinite}
+@keyframes shine{from{background-position:120% 0}to{background-position:-120% 0}}
+.d .dots span{display:inline-block;animation:hop 1.2s ease-in-out infinite}
+.d .dots span:nth-child(2){animation-delay:.15s}
+.d .dots span:nth-child(3){animation-delay:.3s}
+@keyframes hop{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-3px)}}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important}
+}
+</style>
+</head>
+<body>
+<h1>"답변을 준비하고 있어요" 모션 미리보기</h1>
+<p class="lead">실제 코드는 바꾸지 않았고, 이 파일에서만 움직임을 보여 드려요.</p>
+
+<div class="card a">
+  <h2>A. 지금 모습</h2>
+  <div class="typing"><div class="orb"></div><span class="t-caption">답변을 준비하고 있어요…</span></div>
+</div>
+
+<div class="card b">
+  <h2>B. 음성처럼 울리는 파문 + 말랑하게 일렁이는 진주</h2>
+  <div class="typing">
+    <div class="wrap"><i class="ring"></i><i class="ring"></i><i class="ring"></i><div class="orb"></div></div>
+    <span class="t-caption">답변을 준비하고 있어요…</span>
+  </div>
+</div>
+
+<div class="card c">
+  <h2>C. 진주 + 음성 파형 막대</h2>
+  <div class="typing">
+    <div class="orb"></div>
+    <div class="bars"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <span class="t-caption">답변을 준비하고 있어요…</span>
+  </div>
+</div>
+
+<div class="card d">
+  <h2>D. 파문 + 일렁이는 진주 + 글자 위로 빛이 지나감 (추천)</h2>
+  <div class="typing">
+    <div class="wrap"><i class="ring"></i><i class="ring"></i><div class="orb"></div></div>
+    <span class="t-caption shine">답변을 준비하고 있어요<span class="dots"><span>.</span><span>.</span><span>.</span></span></span>
+  </div>
+</div>
+</body>
+</html>

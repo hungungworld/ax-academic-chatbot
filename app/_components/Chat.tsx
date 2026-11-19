@@ -334,6 +334,9 @@ export function Chat() {
           {loading && (
             <div className="typing" role="status">
               <div className="orb orb--sm" aria-hidden="true" />
+              <div className="typing__bars" aria-hidden="true">
+                <i /><i /><i /><i /><i /><i />
+              </div>
               <span className="t-caption">답변을 준비하고 있어요…</span>
             </div>
           )}

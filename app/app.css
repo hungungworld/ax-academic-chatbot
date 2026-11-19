@@ -80,7 +80,20 @@ a { color: var(--brand-600); }
 .msg--error .bubble { box-shadow: var(--shadow-sm), inset 0 0 0 1px var(--danger-bg); }
 .badge__title { font-weight: 500; }
 .typing { display: flex; align-items: center; gap: var(--space-2); margin-top: var(--space-4); align-self: flex-start; }
-.typing .orb--sm { animation-duration: 1.2s; }
+.typing { gap: var(--space-3); }
+.typing .orb--sm { animation: squish 1.6s ease-in-out infinite; }
+/* 음성 파형처럼 오르내리는 막대 */
+.typing__bars { display: flex; align-items: center; gap: 3px; height: 24px; }
+.typing__bars i {
+  display: block; width: 3px; height: 6px; border-radius: 2px;
+  background: linear-gradient(var(--glow-magenta), var(--glow-lilac));
+  animation: wave 1s ease-in-out infinite;
+}
+.typing__bars i:nth-child(2) { animation-delay: .12s; }
+.typing__bars i:nth-child(3) { animation-delay: .24s; }
+.typing__bars i:nth-child(4) { animation-delay: .36s; }
+.typing__bars i:nth-child(5) { animation-delay: .48s; }
+.typing__bars i:nth-child(6) { animation-delay: .6s; }
 
 /* 답변 아래 "이어서 물어보기": 마지막 답변에만 보인다. 폰에서도 줄바꿈해 전부 보이게 */
 .followups { margin-top: var(--space-4); align-self: stretch; animation: rise var(--dur-base) var(--ease-out) both; }
