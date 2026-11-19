@@ -27,6 +27,8 @@ a { color: var(--brand-600); }
 /* ---------- 첫 화면 ---------- */
 .hero { display: flex; flex-direction: column; align-items: center; text-align: center; padding-top: var(--space-10); }
 .hero .orb { margin-bottom: var(--space-10); }
+/* 첫 화면 진주도 색이 분홍에서 보라로 천천히 바뀐다 (생각 중 진주보다 느리게) */
+.hero .orb { animation: breathe 6s var(--ease-out) infinite alternate, hue 7s ease-in-out infinite; }
 .hero .t-sub { margin-top: var(--space-3); max-width: var(--measure); }
 .hero-chips { margin-top: var(--space-8); }
 @media (min-width: 768px) {
