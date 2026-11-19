@@ -11,7 +11,10 @@ const INJECTION =
 // "제가 지각하면 벌점 몇 점?" 같은 가정 질문은 규정 질문이라 제외한다. "제7조"의 "제"와 헷갈리지 않게 뒤에 띄어쓰기를 요구한다.
 const MY_ATTENDANCE_SELF = /(^|\s)(제가|제|내가|내|저는|저의|저|나는|나의|나)\s+.{0,10}(출결|출석|병가|병결|공결|지각|조퇴|결석|벌점|빠졌|빠진)/;
 const MY_ATTENDANCE_ASK = /(몇\s*(번|회|일|점|개)|얼마|조회|확인|알려|썼|썻|사용|남았|남은|쌓|현황|받았)/;
-const MY_ATTENDANCE_DIRECT = /(출결|출석|병가|공결|벌점)\s*(조회|현황)/;
+const MY_ATTENDANCE_DIRECT = /(출결|출석부?|병가|병결|공결|벌점)\s*(조회|현황|내역)/;
+// "출석", "출석 기록", "내 출결 보여줘"처럼 짧게 단어만 친 경우. 규정 질문("출석률 기준")은 뒤에 다른 말이 붙어 걸리지 않는다.
+const MY_ATTENDANCE_SHORT =
+  /^(내|나의|제|저의)?\s*(출석부?|출결|병가|병결|공결|지각|결석|벌점|출결\s*벌점)\s*(기록|조회|확인|현황|내역|정보|상황)?\s*(좀|좀\s*)?(보여\s*(줘|주세요)|알려\s*(줘|주세요)|해\s*(줘|주세요)|확인\s*(해\s*)?(줘|주세요)|볼래|보고\s*싶어(요)?)?\s*[?？.!~]*$/;
 const HYPOTHETICAL = /(하면|되면|이면|으면|경우|할\s*때|기준)/;
 // 개인 성적·상점 조회: 챗봇은 조회하지 않고 접수한다.
 const MY_SCORE = /(제|내|저의|나의|저)\s*(현재\s*)?(벌점|상점|점수|성적|출석률|출결)\s*(이|은|는|가)?\s*.{0,10}(몇|얼마|알려|조회|확인)/;
@@ -26,7 +29,7 @@ const REFUND = /(환불|환급받|돌려받)/;
 export function guard(question: string): GuardResult {
   const q = question.trim();
   if (INJECTION.test(q)) return { category: "blocked", reason: "내부 지시문 요청" };
-  if (MY_ATTENDANCE_DIRECT.test(q) || (MY_ATTENDANCE_SELF.test(q) && MY_ATTENDANCE_ASK.test(q) && !HYPOTHETICAL.test(q)))
+  if (MY_ATTENDANCE_SHORT.test(q) || MY_ATTENDANCE_DIRECT.test(q) || (MY_ATTENDANCE_SELF.test(q) && MY_ATTENDANCE_ASK.test(q) && !HYPOTHETICAL.test(q)))
     return { category: "attendance", reason: "내 출결 조회" };
   if (MY_SCORE.test(q)) return { category: "personal", reason: "개인 점수 조회" };
   if (VERBAL_OK.test(q) || ORDER.test(q)) return { category: "personal", reason: "구두 허락·처리 요청" };

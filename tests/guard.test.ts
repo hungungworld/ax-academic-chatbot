@@ -17,7 +17,16 @@ test("내 출결·벌점 조회는 출석부 조회로 (#23, 운영담당자 허
   assert.equal(cat("제 공결 며칠 남았어요?"), "attendance");
 });
 
+test("짧게 단어만 쳐도 출석부 조회로", () => {
+  for (const q of ["출석", "출결", "출석 기록", "출석부", "출석부 보여줘", "내 출결", "출결 확인", "병가 내역", "지각 기록 알려줘", "벌점 조회", "출석?"])
+    assert.equal(cat(q), "attendance", q);
+});
+
 test("출결 규정 질문은 조회로 보내지 않는다", () => {
+  assert.notEqual(cat("출석률 기준이 뭐예요?"), "attendance");
+  assert.notEqual(cat("출석 인정 사유가 뭐예요?"), "attendance");
+  assert.notEqual(cat("지각 기준"), "attendance");
+  assert.notEqual(cat("결석하면 어떻게 돼요?"), "attendance");
   assert.notEqual(cat("제가 지각하면 벌점 몇 점이에요?"), "attendance");
   assert.notEqual(cat("병가는 몇 일까지 쓸 수 있어요?"), "attendance");
   assert.notEqual(cat("제7조 병가 몇 일 인정돼요?"), "attendance");
