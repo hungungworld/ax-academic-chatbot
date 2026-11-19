@@ -203,7 +203,7 @@ export function Chat() {
   const reset = () => {
     setMessages([]);
     setInput("");
-    inputRef.current?.focus();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const count = input.length;
@@ -217,10 +217,10 @@ export function Chat() {
 
       <header className="header" style={started ? undefined : { background: "transparent", borderBottomColor: "transparent", backdropFilter: "none", WebkitBackdropFilter: "none" }}>
         <div className="header-inner">
-          <div className="header__brand">
+          <button type="button" className="header__brand" onClick={reset} aria-label="AX마스터 학사 도우미, 처음 화면으로">
             <div className="orb orb--sm" aria-hidden="true" />
             <span>AX마스터 학사 도우미</span>
-          </div>
+          </button>
           <div className="header__actions">
             {started && (
               <button type="button" className="btn btn--icon btn--glass btn--sm" aria-label="새 대화" title="새 대화" onClick={reset}>
