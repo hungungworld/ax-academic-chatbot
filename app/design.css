@@ -533,6 +533,8 @@ p + p { margin-top: var(--space-3); }
 @keyframes spin     { to { transform: rotate(360deg); } }
 @keyframes hue { 0%, 100% { filter: hue-rotate(0deg) saturate(1); } 50% { filter: hue-rotate(-40deg) saturate(1.25); } }
 @keyframes shine { from { background-position: 120% 0; } to { background-position: -120% 0; } }
+@keyframes think { 0%, 70%, 100% { transform: scale(.7); opacity: .55; } 35% { transform: scale(1.35); opacity: 1; } }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
