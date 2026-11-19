@@ -26,13 +26,14 @@ a { color: var(--brand-600); }
 
 /* ---------- 첫 화면 ---------- */
 /* 스크롤 없이 진주·인사말·추천 질문·입력창이 한 화면에 다 보이도록, 간격과 크기를 화면 높이(vh)에 맞춰 줄인다. */
-.hero { display: flex; flex-direction: column; align-items: center; text-align: center; padding-top: clamp(var(--space-1), 2vh, var(--space-12)); }
-.hero .orb:not(.orb--sm) { --orb-size: clamp(64px, 17vh, 220px); margin-bottom: clamp(var(--space-3), 2.6vh, var(--space-10)); }
+.hero { display: flex; flex-direction: column; align-items: center; text-align: center; padding-top: clamp(var(--space-2), 4.5vh, var(--space-12)); }
+/* 진주 바깥 테두리 빛이 28px 번지므로, 글자와 숨 쉴 틈이 생기도록 아래 간격을 넉넉히 둔다 */
+.hero .orb:not(.orb--sm) { --orb-size: clamp(64px, 14vh, 200px); margin-bottom: clamp(32px, 6.5vh, 64px); }
 /* 첫 화면 진주도 색이 분홍에서 보라로 천천히 바뀐다 (생각 중 진주보다 느리게) */
 .hero .orb { animation: breathe 6s var(--ease-out) infinite alternate, hue 7s ease-in-out infinite; }
 .hero .t-display { font-size: clamp(26px, 5vh, var(--fs-display)); line-height: 1.3; }
-.hero .t-sub { margin-top: clamp(var(--space-1), 1.2vh, var(--space-3)); max-width: var(--measure); }
-.hero-chips { margin-top: clamp(var(--space-3), 2.2vh, var(--space-8)); }
+.hero .t-sub { margin-top: clamp(6px, 1.3vh, var(--space-3)); max-width: var(--measure); }
+.hero-chips { margin-top: clamp(var(--space-3), 3vh, var(--space-8)); }
 @media (min-width: 768px) {
   /* 넓은 화면에서는 칩을 가운데에 줄바꿈으로 놓는다 (가로 스크롤 불필요) */
   .hero-chips .chips { flex-wrap: wrap; justify-content: center; overflow: visible; margin-inline: 0; padding-inline: 0; }
