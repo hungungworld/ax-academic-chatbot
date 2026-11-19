@@ -1,7 +1,7 @@
 // 화면과 서버가 함께 쓰는 타입
 
-/** ① 규정에 명시 / ② 개인 사정·담당자 판단 / ③ 규정에 없음·범위 밖 / 환불 계산 / 거절 */
-export type Category = "rule" | "personal" | "out_of_scope" | "refund" | "blocked";
+/** ① 규정에 명시 / ② 개인 사정·담당자 판단 / ③ 규정에 없음·범위 밖 / 환불 계산 / 내 출결 조회 / 거절 */
+export type Category = "rule" | "personal" | "out_of_scope" | "refund" | "attendance" | "blocked";
 
 export type ChatTurn = { role: "user" | "bot"; text: string };
 
@@ -24,6 +24,8 @@ export type ChatReply = {
   showContacts: boolean;
   /** 환불 계산기를 열 수 있게 할지 (수강시수를 말했으면 미리 채움) */
   refund?: { attendedHours?: number };
+  /** 출석부 조회 창을 열 수 있게 할지 */
+  attendance?: boolean;
   /** 답변 아래에 보여 줄 이어서 물어볼 질문 (최대 3개, 누르면 바로 보냄) */
   followups?: string[];
 };

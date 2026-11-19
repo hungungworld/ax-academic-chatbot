@@ -4,6 +4,7 @@ import { CONTACTS } from "@/lib/contacts";
 import { MAX_QUESTION_CHARS } from "@/lib/limits";
 import type { ChatReply, ChatTurn } from "@/lib/types";
 import { IconAlert, IconAward, IconChart, IconCheck, IconClock, IconPhone, IconRefresh, IconSend, IconUser, IconWon } from "./Icons";
+import { AttendanceSheet } from "./AttendanceSheet";
 import { RefundSheet } from "./RefundSheet";
 import { TicketSheet } from "./TicketSheet";
 import { Sheet } from "./Sheet";
@@ -12,7 +13,9 @@ type Msg =
   | { id: string; role: "user"; text: string; time: string }
   | { id: string; role: "bot"; text: string; time: string; reply?: ChatReply; error?: boolean };
 
-const SUGGESTIONS = [
+// open: 질문을 보내지 않고 바로 창을 연다
+const SUGGESTIONS: { icon: React.ReactNode; label: string; q: string; open?: "attendance" }[] = [
+  { icon: <IconUser size={16} />, label: "내 출결 조회", q: "내 출결 조회", open: "attendance" },
   { icon: <IconCheck size={16} />, label: "공결 인정 사유", q: "공결로 인정되는 사유가 뭐가 있어요?" },
   { icon: <IconClock size={16} />, label: "지각 기준", q: "지각은 몇 시부터이고 벌점은 몇 점이에요?" },
   { icon: <IconWon size={16} />, label: "환불 계산", q: "중도 퇴교하면 교육비 환불은 어떻게 계산해요?" },
@@ -129,6 +132,7 @@ export function Chat() {
   const [ticket, setTicket] = useState<{ question: string | null; category: string | null } | null>(null);
   const [refund, setRefund] = useState<{ attendedHours?: number } | null>(null);
   const [contactsOpen, setContactsOpen] = useState(false);
+  const [attendanceOpen, setAttendanceOpen] = useState(false);
   const [toast, setToast] = useState<{ kind: "success" | "danger"; text: string } | null>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
@@ -193,7 +197,7 @@ export function Chat() {
   const followupsFor = (r?: ChatReply) => {
     if (r?.followups?.length) return r.followups;
     const asked = new Set(messages.filter((m) => m.role === "user").map((m) => m.text));
-    return SUGGESTIONS.filter((s) => !asked.has(s.q)).slice(0, 3).map((s) => s.q);
+    return SUGGESTIONS.filter((s) => !s.open && !asked.has(s.q)).slice(0, 3).map((s) => s.q);
   };
 
   const reset = () => {
@@ -250,7 +254,7 @@ export function Chat() {
             <section className="hero-chips" aria-label="추천 질문">
               <div className="chips" role="list">
                 {SUGGESTIONS.map((s) => (
-                  <button key={s.label} type="button" className="chip" role="listitem" onClick={() => send(s.q)}>
+                  <button key={s.label} type="button" className="chip" role="listitem" onClick={() => (s.open ? setAttendanceOpen(true) : send(s.q))}>
                     <span className="chip__icon">{s.icon}</span>
                     {s.label}
                   </button>
@@ -294,8 +298,14 @@ export function Chat() {
                   </div>
                 )}
                 {r?.showContacts && <ContactCards />}
-                {(r?.handoff || r?.refund || m.error) && (
+                {(r?.handoff || r?.refund || r?.attendance || m.error) && (
                   <div className="msg__actions">
+                    {r?.attendance && (
+                      <button type="button" className="btn btn--soft btn--sm" onClick={() => setAttendanceOpen(true)}>
+                        <IconUser />
+                        내 출결 조회하기
+                      </button>
+                    )}
                     {r?.refund && (
                       <button type="button" className="btn btn--soft btn--sm" onClick={() => setRefund(r.refund ?? {})}>
                         <IconWon />
@@ -392,6 +402,15 @@ export function Chat() {
                 text: `담당자에게 접수했어요${id ? ` (접수 번호 ${id})` : ""}. 확인 후 적어 주신 연락처로 연락드릴게요. 급한 일이면 담당자에게 바로 전화해 주세요.`,
               },
             ]);
+          }}
+        />
+      )}
+      {attendanceOpen && (
+        <AttendanceSheet
+          onClose={() => setAttendanceOpen(false)}
+          onTicket={() => {
+            setAttendanceOpen(false);
+            setTicket({ question: "출석부 기록 확인 요청", category: "attendance" });
           }}
         />
       )}

@@ -2,6 +2,7 @@
 //
 //   START → guard ─┬─ blocked ───────────────→ END   (지시문 공개 요청 등 거절)
 //                  ├─ refund ────────────────→ END   (제25조 공식 안내 + 코드 계산기)
+//                  ├─ attendance ────────────→ END   (내 출결: 출석부 조회 창 안내, 조회는 /api/attendance)
 //                  ├─ contacts ──────────────→ END   (담당자 연락처, 원문 그대로)
 //                  ├─ personal ─→ retrieve        (코드로 확실히 개인 사정인 경우)
 //                  └─ classify ─┬─ out_of_scope → contacts
@@ -211,6 +212,26 @@ function refundNode(s: S): Partial<S> {
   };
 }
 
+function attendanceNode(): Partial<S> {
+  return {
+    reply: shape({
+      category: "attendance",
+      summary: "출석부에서 내 출결을 바로 조회할 수 있어요.",
+      points: [
+        "공결 사용: 병가·면접 등 종류별로 쓴 일수와 한도",
+        "출결 벌점: 지금까지 쌓인 점수",
+        "월별 기록: 달마다 경미한 지각·누락, 지각·조퇴, 결석 횟수",
+      ],
+      note: "아래 버튼을 눌러 이름을 입력하면 돼요. 출석부에 적힌 출결 벌점만 보여 드리고, 생활태도 벌점이나 성적은 담당자에게 문의해 주세요.",
+      citations: cite(["제7조"]),
+      handoff: false,
+      showContacts: false,
+      attendance: true,
+      followups: ["병가는 며칠까지 인정돼요?", "출결 벌점이 쌓이면 어떻게 돼요?"],
+    }),
+  };
+}
+
 function blockedNode(): Partial<S> {
   return {
     reply: shape({
@@ -236,11 +257,13 @@ const graph = new StateGraph(State)
   .addNode("contacts", contactsNode)
   .addNode("refund", refundNode)
   .addNode("blocked", blockedNode)
+  .addNode("attendance", attendanceNode)
   .addEdge(START, "guard")
   .addConditionalEdges("guard", (s) => {
     if (s.direct === "contacts") return "contacts";
     if (s.category === "blocked") return "blocked";
     if (s.category === "refund") return "refund";
+    if (s.category === "attendance") return "attendance";
     if (s.category === "personal") return "retrieve";
     return "classify";
   })
@@ -251,6 +274,7 @@ const graph = new StateGraph(State)
   .addEdge("contacts", END)
   .addEdge("refund", END)
   .addEdge("blocked", END)
+  .addEdge("attendance", END)
   .compile();
 
 export async function ask(question: string, history: ChatTurn[]): Promise<ChatReply> {

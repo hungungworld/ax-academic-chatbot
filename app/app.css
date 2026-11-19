@@ -147,3 +147,28 @@ a { color: var(--brand-600); }
 .select { height: 36px; padding: 0 var(--space-3); border-radius: var(--radius-pill); border: 1px solid rgba(164, 140, 200, 0.35); background: rgba(255, 255, 255, 0.8); font-size: 14px; color: var(--text-strong); }
 .empty { padding: var(--space-12) var(--space-4); text-align: center; }
 .login-card { max-width: 480px; margin: var(--space-10) auto 0; }
+
+/* 내 출결 조회 */
+.att-remember { margin-top: var(--space-3); display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--fs-body-sm); line-height: var(--lh-body-sm); color: var(--text-sub); cursor: pointer; }
+.att-remember input { width: 18px; height: 18px; accent-color: var(--brand-600); }
+.att-choose { margin-top: var(--space-6); }
+.att-choose__title { margin-bottom: var(--space-3); font-weight: 600; color: var(--text-strong); }
+.att-result { margin-top: var(--space-6); display: flex; flex-direction: column; gap: var(--space-4); }
+.att-asof { display: flex; gap: var(--space-2); align-items: flex-start; padding: var(--space-3) var(--space-4); border-radius: var(--radius-sm); background: var(--info-bg); color: var(--info); font-size: var(--fs-body-sm); line-height: var(--lh-body-sm); }
+.att-asof svg { flex: none; margin-top: 2px; }
+.att-asof--warn { background: var(--warning-bg); color: var(--warning); }
+.att-block { padding: var(--space-4); border-radius: var(--radius-md); background: rgba(255, 255, 255, 0.7); box-shadow: var(--glass-inset); }
+.att-block__title { margin: 0 0 var(--space-3); font-size: var(--fs-body); line-height: var(--lh-body); font-weight: 700; color: var(--text-strong); }
+.att-block__title small { margin-left: var(--space-2); font-size: var(--fs-caption); font-weight: 500; color: var(--text-muted); }
+.att-penalty { margin: 0; font-size: 28px; line-height: 1.2; font-weight: 700; color: var(--brand-600); font-variant-numeric: tabular-nums; }
+.att-dl { margin: 0; display: flex; flex-direction: column; gap: var(--space-2); font-size: var(--fs-body-sm); line-height: var(--lh-body-sm); }
+.att-dl__row { display: flex; justify-content: space-between; gap: var(--space-4); }
+.att-dl dt { color: var(--text-sub); }
+.att-dl dd { margin: 0; font-weight: 600; color: var(--text-strong); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.att-max { font-weight: 500; color: var(--text-muted); }
+.att-sub { margin-top: var(--space-2); }
+.att-past summary { cursor: pointer; font-weight: 600; color: var(--text-strong); }
+.att-table { width: 100%; margin-top: var(--space-3); border-collapse: collapse; font-size: var(--fs-body-sm); font-variant-numeric: tabular-nums; }
+.att-table th, .att-table td { padding: var(--space-2) var(--space-1); text-align: center; border-top: 1px solid var(--glass-border-soft); }
+.att-table thead th { border-top: 0; font-weight: 600; color: var(--text-sub); }
+.att-table tbody th { font-weight: 600; color: var(--text-strong); }

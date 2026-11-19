@@ -10,6 +10,7 @@ export const RATE = {
   chat: { max: 20, windowMs: 10 * 60_000 }, // 질문 10분에 20개
   ticket: { max: 5, windowMs: 60 * 60_000 }, // 접수 1시간에 5건
   login: { max: 10, windowMs: 15 * 60_000 }, // 담당자 로그인 15분에 10번
+  attendance: { max: 10, windowMs: 10 * 60_000 }, // 출결 조회 10분에 10번 (이름을 하나씩 넣어 명단을 훑지 못하게)
 } as const;
 
 // 서버 메모리에 기록하는 간단한 제한. (Vercel은 인스턴스가 여러 개일 수 있어 대략적인 상한이다)
