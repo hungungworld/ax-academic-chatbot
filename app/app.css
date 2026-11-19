@@ -33,7 +33,7 @@ a { color: var(--brand-600); }
 .hero .orb { animation: breathe 6s var(--ease-out) infinite alternate, hue 7s ease-in-out infinite; }
 .hero .t-display { font-size: clamp(26px, 5vh, var(--fs-display)); line-height: 1.3; }
 .hero .t-sub { margin-top: clamp(6px, 1.3vh, var(--space-3)); max-width: var(--measure); }
-.hero-chips { margin-top: clamp(var(--space-3), 3vh, var(--space-8)); }
+.hero-chips { margin-top: clamp(var(--space-4), 6vh, 56px); }
 @media (min-width: 768px) {
   /* 넓은 화면에서는 칩을 가운데에 줄바꿈으로 놓는다 (가로 스크롤 불필요) */
   .hero-chips .chips { flex-wrap: wrap; justify-content: center; overflow: visible; margin-inline: 0; padding-inline: 0; }
